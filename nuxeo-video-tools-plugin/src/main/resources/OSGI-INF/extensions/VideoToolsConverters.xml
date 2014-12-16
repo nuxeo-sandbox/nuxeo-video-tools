@@ -1,0 +1,47 @@
+<component name="org.nuxeo.video.tools.converters">
+
+	<!-- The converters -->
+	<extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl"
+		point="converter">
+
+		<converter name="videoToClosedCaptions"
+			class="org.nuxeo.video.tools.VideoToolsCommandLineConverter">
+			<parameters>
+				<parameter name="CommandLineName">videoToClosedCaptions</parameter>
+			</parameters>
+		</converter>
+
+		<converter name="videoToClosedCaptionsSliced"
+			class="org.nuxeo.video.tools.VideoToolsCommandLineConverter">
+			<parameters>
+				<parameter name="CommandLineName">videoToClosedCaptionsSliced</parameter>
+			</parameters>
+		</converter>
+
+	</extension>
+
+	<!-- The command lines -->
+	<require>org.nuxeo.ecm.platform.commandline.executor.service.defaultContrib
+	</require>
+	<extension
+		target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
+		point="command">
+
+		<command name="videoToClosedCaptions" enabled="true">
+			<commandLine>ccextractor</commandLine>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -o #{outFilePath}</parameterString>
+			<installationDirective>You need to install ccextractor.
+			</installationDirective>
+		</command>
+
+		<command name="videoToClosedCaptionsSliced" enabled="true">
+			<commandLine>ccextractor</commandLine>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -o #{outFilePath}</parameterString>
+			<installationDirective>You need to install ccextractor.
+			</installationDirective>
+		</command>
+
+	</extension>
+
+</component>
+

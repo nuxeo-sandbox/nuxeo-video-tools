@@ -1,0 +1,133 @@
+/*
+ * (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and contributors.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * Contributors:
+ *     Thibaud Arguillere
+ */
+
+package org.nuxeo.video.tools.test;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.nuxeo.video.tools.CCExtractor;
+import org.nuxeo.common.utils.FileUtils;
+import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
+import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
+import org.nuxeo.ecm.core.test.CoreFeature;
+import org.nuxeo.ecm.platform.test.PlatformFeature;
+import org.nuxeo.runtime.test.runner.Deploy;
+import org.nuxeo.runtime.test.runner.Features;
+import org.nuxeo.runtime.test.runner.FeaturesRunner;
+
+import com.google.inject.Inject;
+
+@RunWith(FeaturesRunner.class)
+@Features({ PlatformFeature.class, CoreFeature.class,
+        EmbeddedAutomationServerFeature.class })
+@Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor" })
+public class VideoToolsTest {
+
+    protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
+
+    protected static final String VIDEO_NAME = "files/VideoLan-Example.ts";
+
+    @Inject
+    CoreSession coreSession;
+
+    protected void doLog(String what) {
+        System.out.println(what);
+    }
+
+    // Not sure it's the best way to get the current method name, but at least
+    // it works
+    protected String getCurrentMethodName(RuntimeException e) {
+        StackTraceElement currentElement = e.getStackTrace()[0];
+        return currentElement.getMethodName();
+    }
+
+    @Before
+    public void setUp() {
+
+    }
+
+    @After
+    public void cleanup() {
+
+    }
+    
+    protected String fileBlobToString(FileBlob inBlob) throws IOException {
+
+        File f = inBlob.getFile();
+        Path p = Paths.get(f.getAbsolutePath());
+        
+        return new String(Files.readAllBytes(p));
+    }
+
+    @Ignore
+    @Test
+    public void testExtractCC() throws Exception {
+        
+        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+
+        File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
+        FileBlob fb = new FileBlob(f);
+
+        CCExtractor cce = new CCExtractor(fb);
+        Blob result = cce.extractCC();
+        assertNotNull(result);
+
+        // It should be a FileBlob
+        assertTrue(result instanceof FileBlob);
+        
+        String cc = fileBlobToString((FileBlob) result);
+        assertNotNull(cc);
+        assertNotEquals("", cc);
+        
+    }
+
+    @Test
+    public void testExtractCC_sliced() throws Exception {
+        
+        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+
+        File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
+        FileBlob fb = new FileBlob(f);
+
+        CCExtractor cce = new CCExtractor(fb, "00:10", "00:20");
+        Blob result = cce.extractCC();
+        assertNotNull(result);
+
+        // It should be a FileBlob
+        assertTrue(result instanceof FileBlob);
+        
+        String cc = fileBlobToString((FileBlob) result);
+        assertNotNull(cc);
+        assertNotEquals("", cc);
+        
+    }
+}

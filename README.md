@@ -1,0 +1,32 @@
+nuxeo-video-tools
+===========================
+
+_(Work in progress)_
+
+This plug-in adds tools for handling videos: Extract CloasedCaptions is the first tool added (December-2014)
+
+## Third Party Tools Used
+* **[`ccextractor`](http://ccextractor.sourceforge.net)** is used as the main tool to extract the Closed Captions from a video.<br/>
+`im4java` is licensed under the GPL 2.0 license
+
+* Other tools depend up on you: `ImageMagick`, `GraphicsMagic` and `ExifTool`.
+
+## License
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU Lesser General Public License
+(LGPL) version 2.1 which accompanies this distribution, and is available at
+http://www.gnu.org/licenses/lgpl-2.1.html
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+Contributors:
+Thibaud Arguillere (https://github.com/ThibArg)
+
+## About Nuxeo
+
+Nuxeo provides a modular, extensible Java-based [open source software platform for enterprise content management](http://www.nuxeo.com) and packaged applications for Document Management, Digital Asset Management and Case Management. Designed by developers for developers, the Nuxeo platform offers a modern architecture, a powerful plug-in model and extensive packaging capabilities for building content applications.

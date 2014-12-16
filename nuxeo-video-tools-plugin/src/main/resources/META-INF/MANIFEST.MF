@@ -1,0 +1,11 @@
+Manifest-Version: 0.0.1
+Bundle-SymbolicName: nuxeo-video-tools
+Bundle-Name: nuxeo-video-tools
+Bundle-Version: 0.1.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/VideoToolsConverters.xml
+
