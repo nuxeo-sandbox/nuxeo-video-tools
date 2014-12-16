@@ -9,7 +9,6 @@ This plug-in adds tools for handling videos: Extract CloasedCaptions is the firs
 * **[`ccextractor`](http://ccextractor.sourceforge.net)** is used as the main tool to extract the Closed Captions from a video.<br/>
 `im4java` is licensed under the GPL 2.0 license
 
-* Other tools depend up on you: `ImageMagick`, `GraphicsMagic` and `ExifTool`.
 
 ## License
 (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
