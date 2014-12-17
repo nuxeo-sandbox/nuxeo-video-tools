@@ -67,7 +67,7 @@ public class CCExtractor extends AbstractVideoTools {
         BlobHolder source = new SimpleBlobHolder(blob);
         Map<String, Serializable> parameters = new HashMap<String, Serializable>();
 
-        if (theOutFormat != null && !theOutFormat.isEmpty()) {
+        if (!StringUtils.isBlank(theOutFormat)) {
             parameters.put("outFormat", theOutFormat);
         }
 
