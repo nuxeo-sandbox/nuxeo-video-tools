@@ -44,10 +44,10 @@ public class CCExtractorWork extends AbstractWork {
 
     private static final Log log = LogFactory.getLog(CCExtractorWork.class);
 
-    public static final String CATEGORY_VIDEO_EXTRACT_CLOSED_CAPTIONS = "videoExtractClosedCaptions";
+    public static final String CATEGORY_VIDEO_EXTRACT_CLOSED_CAPTIONS = "videoClosedCaptionsExtractor";
 
     public static final String VIDEO_EXTRACT_CLOSED_CAPTIONS_DONE_EVENT = "videoClosedCaptionsExtractionDone";
-    
+
     protected static String computeIdPrefix(String repositoryName, String docId) {
         return repositoryName + ':' + docId + ":closedCaptionsExtraction:";
     }
@@ -81,25 +81,38 @@ public class CCExtractorWork extends AbstractWork {
             cleanUp(true, null);
         }
 
-        if (originalVideo == null) {
-            setStatus("Nothing to process");
-            return;
+        Blob result = null;
+        if (originalVideo != null) {
+            CCExtractor cce = new CCExtractor(originalVideo.getBlob());
+            result = cce.extractCC("txt");
         }
+        saveDocument(result);
+    }
 
-        CCExtractor cce = new CCExtractor(originalVideo.getBlob());
-        Blob result = cce.extractCC();
+    protected void saveDocument(Blob inClosedCaptions) {
 
-        // Save it to the document
-        setStatus("Saving closed captions");
+        if (inClosedCaptions == null) {
+            setStatus("No Closed Captions, ot no video file");
+        } else {
+            setStatus("Saving Closed Captions");
+        }
         startTransaction();
         initSession();
         DocumentModel doc = session.getDocument(new IdRef(docId));
-        if (!doc.hasFacet(FACET_VIDEO_CLOSED_CAPTIONS)) {
-            doc.addFacet(FACET_VIDEO_CLOSED_CAPTIONS);
+        if (inClosedCaptions != null) {
+            if (!doc.hasFacet(FACET_VIDEO_CLOSED_CAPTIONS)) {
+                doc.addFacet(FACET_VIDEO_CLOSED_CAPTIONS);
+            }
+            doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH,
+                    (Serializable) inClosedCaptions);
+            doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH,
+                    inClosedCaptions.getFilename());
+        } else {
+            doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH, null);
+            doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH, null);
+            doc.removeFacet(FACET_VIDEO_CLOSED_CAPTIONS);
         }
-        doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH, (Serializable) result);
-        doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH, result.getFilename());
-        
+
         // It may happen the async. job is done while, in the meantime, the user
         // created a version
         if (doc.isVersion()) {
@@ -120,7 +133,7 @@ public class CCExtractorWork extends AbstractWork {
         }
         return video;
     }
-    
+
     protected void fireClosedCaptionsExtractionDoneEvent(DocumentModel doc) {
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         List<String> workIds = workManager.listWorkIds(

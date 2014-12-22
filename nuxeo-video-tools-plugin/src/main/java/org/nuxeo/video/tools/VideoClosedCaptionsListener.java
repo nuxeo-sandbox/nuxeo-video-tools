@@ -37,7 +37,11 @@ import static org.nuxeo.ecm.platform.video.VideoConstants.VIDEO_CHANGED_EVENT;
 
 /**
  * This is a postcommit, async. event. So, the Document is already saved and
- * commited, we just schedule the work on it
+ * committed, we just schedule the work on it. This class handles the
+ * "videoChanged" event triggered by nuxeo.
+ * 
+ * Unfortunately, it is not triggered when the video file is removed from the
+ * document, we must handle this in a dedicated event
  * 
  */
 public class VideoClosedCaptionsListener implements

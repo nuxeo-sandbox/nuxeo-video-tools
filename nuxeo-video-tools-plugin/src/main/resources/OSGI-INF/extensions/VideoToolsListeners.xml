@@ -1,0 +1,19 @@
+<component name="org.nuxeo.video.tools.listener.contrib.VideoBeforeModificationListener">
+
+  <extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+    point="listener">
+    
+    <listener name="videoclosedcaptionslistener" async="true" postCommit="true"
+      class="org.nuxeo.video.tools.VideoClosedCaptionsListener" priority="100">
+      <event>videoChanged</event>
+    </listener>
+
+    <listener name="videobeforemodificationlistener" async="false" postCommit="false"
+      class="org.nuxeo.video.tools.VideoBeforeModificationListener" priority="100">
+      <event>aboutToCreate</event>
+      <event>beforeDocumentModification </event>
+    </listener>
+    
+  </extension>
+
+</component>

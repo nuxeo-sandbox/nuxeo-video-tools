@@ -44,8 +44,6 @@ import org.nuxeo.ecm.platform.convert.plugins.CommandLineBasedConverter;
 public class VideoToolsCommandLineConverter extends CommandLineBasedConverter {
 
     public static final Log log = LogFactory.getLog(VideoToolsCommandLineConverter.class);
-    
-    public static final String OUTFORMAT = "ttxt";
 
     public VideoToolsCommandLineConverter() throws Exception {
         super();
@@ -100,10 +98,8 @@ public class VideoToolsCommandLineConverter extends CommandLineBasedConverter {
 
         cmdStringParams.put("outDirPath", outDir.getAbsolutePath());
         
+        // outFormat is a required parameter
         String outFormat = (String) parameters.get("outFormat");
-        if(outFormat == null || outFormat.isEmpty()) {
-            outFormat = OUTFORMAT;
-        }
         cmdStringParams.put("outFormat", outFormat);
         
         String startAt = (String) parameters.get("startAt");

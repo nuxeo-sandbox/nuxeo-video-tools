@@ -1,7 +1,7 @@
 <component name="org.nuxeo.video.tools.works">
 
 	<extension target="org.nuxeo.ecm.core.work.service" point="queues">
-		<queue id="videoClosedCaptions">
+		<queue id="videoClosedCaptionsExtractor">
 			<maxThreads>1</maxThreads>
 			<category>videoExtractClosedCaptions</category>
 		</queue>

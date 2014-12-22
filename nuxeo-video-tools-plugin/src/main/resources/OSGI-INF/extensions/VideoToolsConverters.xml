@@ -29,14 +29,14 @@
 
 		<command name="videoToClosedCaptions" enabled="true">
 			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -o #{outFilePath}</parameterString>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o #{outFilePath}</parameterString>
 			<installationDirective>You need to install ccextractor.
 			</installationDirective>
 		</command>
 
 		<command name="videoToClosedCaptionsSliced" enabled="true">
 			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -o #{outFilePath}</parameterString>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -trim -o #{outFilePath}</parameterString>
 			<installationDirective>You need to install ccextractor.
 			</installationDirective>
 		</command>

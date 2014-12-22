@@ -24,7 +24,7 @@ public class VideoToolsConstants {
     
     public static final String CLOSED_CAPTIONS_BLOB_XPATH = SCHEMA_PREFIX_VIDEO_CLOSED_CAPTIONS + ":" + "content";
     
-    public static final String CLOSED_CAPTIONS_FILENAME_XPATH = SCHEMA_PREFIX_VIDEO_CLOSED_CAPTIONS + ":" + "filename";
+    public static final String CLOSED_CAPTIONS_FILENAME_XPATH = SCHEMA_PREFIX_VIDEO_CLOSED_CAPTIONS + ":" + "fileName";
 
     public static final String FACET_VIDEO_CLOSED_CAPTIONS = "VideoClosedCaptions";
 }

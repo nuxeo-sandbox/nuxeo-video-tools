@@ -31,11 +31,11 @@ import org.nuxeo.runtime.api.Framework;
  *
  * @since 7.1
  */
-public abstract class AbstractVideoTools {
+public abstract class BaseVideoTools {
 
-    Blob blob;
+    protected Blob blob;
 
-    public AbstractVideoTools(Blob inBlob) {
+    public BaseVideoTools(Blob inBlob) {
         blob = inBlob;
     }
 

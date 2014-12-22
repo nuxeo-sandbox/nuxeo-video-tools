@@ -17,11 +17,13 @@
 package org.nuxeo.video.tools;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
@@ -37,11 +39,16 @@ import org.nuxeo.runtime.api.Framework;
  *
  * @since 7.1
  */
-public class CCExtractor extends AbstractVideoTools {
+public class CCExtractor extends BaseVideoTools {
 
     public static final String CONVERTER_FULL_VIDEO = "videoToClosedCaptions";
 
     public static final String CONVERTER_SLICED_VIDEO = "videoToClosedCaptionsSliced";
+    
+    public static final String DEFAULT_OUTFORMAT = "ttxt";
+        
+    public static final List<String> TEXT_OUTFORMATS = 
+            Collections.unmodifiableList(Arrays.asList("srt", "txt", "ttxt"));
 
     String startAt;
 
@@ -61,6 +68,10 @@ public class CCExtractor extends AbstractVideoTools {
     public Blob extractCC() {
         return extractCC(null);
     }
+    
+    protected boolean isTextOutFormat(String inFormat) {
+        return TEXT_OUTFORMATS.contains(inFormat);
+    }
 
     public Blob extractCC(String theOutFormat) {
 
@@ -71,9 +82,10 @@ public class CCExtractor extends AbstractVideoTools {
         BlobHolder source = new SimpleBlobHolder(blob);
         Map<String, Serializable> parameters = new HashMap<String, Serializable>();
 
-        if (!StringUtils.isBlank(theOutFormat)) {
-            parameters.put("outFormat", theOutFormat);
+        if (StringUtils.isBlank(theOutFormat)) {
+            theOutFormat = DEFAULT_OUTFORMAT;
         }
+        parameters.put("outFormat", theOutFormat);
 
         BlobHolder result = null;
         String converterName = CONVERTER_FULL_VIDEO;
@@ -85,6 +97,10 @@ public class CCExtractor extends AbstractVideoTools {
         result = conversionService.convert(converterName, source, parameters);
         if (result != null) {
             blobCC = result.getBlob();
+            blobCC.setFilename(blob.getFilename() + "." + theOutFormat);
+            if(isTextOutFormat(theOutFormat)) {
+                blobCC.setMimeType("text/plain");
+            }
         }
 
         return blobCC;

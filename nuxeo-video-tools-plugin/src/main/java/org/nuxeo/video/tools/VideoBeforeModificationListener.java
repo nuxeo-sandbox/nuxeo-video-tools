@@ -1,0 +1,61 @@
+/*
+ * (C) Copyright ${year} Nuxeo SA (http://nuxeo.com/) and contributors.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * Contributors:
+ *     thibaud
+ */
+
+package org.nuxeo.video.tools;
+
+import static org.nuxeo.video.tools.VideoToolsConstants.*;
+import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.*;
+
+import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventContext;
+import org.nuxeo.ecm.core.event.EventListener;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.ecm.platform.video.VideoConstants;
+
+/**
+ * Extraction of ClosedCaptions is done in another listener (listening to
+ * "videoChanged"). Here, we just cleanup everything if the current document has
+ * no video at all
+ * 
+ */
+public class VideoBeforeModificationListener implements EventListener {
+
+    @Override
+    public void handleEvent(Event event) throws ClientException {
+        EventContext ctx = event.getContext();
+        if (!(ctx instanceof DocumentEventContext)) {
+            return;
+        }
+
+        DocumentEventContext docCtx = (DocumentEventContext) ctx;
+        DocumentModel doc = docCtx.getSourceDocument();
+        if (ABOUT_TO_CREATE.equals(event.getName())
+                || BEFORE_DOC_UPDATE.equals(event.getName())) {
+            if (doc.hasFacet(VideoConstants.VIDEO_FACET)
+                    && doc.hasFacet(FACET_VIDEO_CLOSED_CAPTIONS)
+                    && doc.getPropertyValue("file:content") == null) {
+                doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH, null);
+                doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH, null);
+                doc.removeFacet(FACET_VIDEO_CLOSED_CAPTIONS);
+                // No save here because we are in "beforeModification" or
+                // "aboutToCreate" => nuxeo will save the doc later
+            }
+        }
+    }
+}
