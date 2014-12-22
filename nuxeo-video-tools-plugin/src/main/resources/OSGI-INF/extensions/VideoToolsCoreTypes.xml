@@ -1,0 +1,21 @@
+<component name="org.nuxeo.video.tools.coretypes">
+
+	<!-- Schemas and facets -->
+	<require>org.nuxeo.ecm.core.CoreExtensions</require>
+	<require>org.nuxeo.ecm.core.schema.TypeService</require>
+
+	<extension target="org.nuxeo.ecm.core.schema.TypeService"
+		point="schema">
+		<schema name="VideoClosedCaptions" src="schemas/VideoClosedCaptions.xsd"
+			prefix="videocc" />
+	</extension>
+
+	<extension target="org.nuxeo.ecm.core.schema.TypeService"
+		point="doctype">
+		<facet name="VideoClosedCaptions">
+			<schema name="VideoClosedCaptions" />
+		</facet>
+	</extension>
+
+</component>
+

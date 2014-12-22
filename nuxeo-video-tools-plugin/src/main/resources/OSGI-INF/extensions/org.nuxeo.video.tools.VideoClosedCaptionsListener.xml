@@ -1,0 +1,12 @@
+<component name="org.nuxeo.video.tools.listener.contrib.VideoClosedCaptionsListener">
+
+  <extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+    point="listener">
+
+    <listener name="videoclosedcaptionslistener" async="true" postCommit="true"
+      class="org.nuxeo.video.tools.VideoClosedCaptionsListener" priority="100">
+      <event>videoChanged</event>
+    </listener>
+  </extension>
+
+</component>

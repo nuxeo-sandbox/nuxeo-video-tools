@@ -29,7 +29,11 @@ import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.runtime.api.Framework;
 
 /**
- * Warning: ccextractor command line must be installed
+ * Warning: ccextractor command line (http://ccextractor.sourceforge.net) must
+ * be installed
+ * 
+ * The closed captions are extracted in a text file (depending on the requests
+ * output format)
  *
  * @since 7.1
  */

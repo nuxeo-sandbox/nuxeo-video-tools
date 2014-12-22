@@ -27,37 +27,46 @@ import org.nuxeo.ecm.platform.picture.api.BlobHelper;
 import org.nuxeo.runtime.api.Framework;
 
 /**
- * Umbrella class
+ * Umbrella class with basic utilities
  *
  * @since 7.1
  */
 public abstract class AbstractVideoTools {
-    
+
     Blob blob;
-    
+
     public AbstractVideoTools(Blob inBlob) {
         blob = inBlob;
     }
-    
+
+    /**
+     * Return the java File holding the blob. If the blob was not backed-up by a
+     * File, create a temporary one
+     * 
+     * @return the java File holding the blob
+     * @throws IOException
+     *
+     * @since 7.1
+     */
     public File getBlobFile() throws IOException {
-        
+
         File f = null;
-        
+
         try {
             f = BlobHelper.getFileFromBlob(blob);
         } finally {
             // Nothing
         }
-        
-        if(f == null) {
-            
+
+        if (f == null) {
+
             File tempFile = File.createTempFile("NxVT-", "");
             blob.transferTo(tempFile);
             tempFile.deleteOnExit();
             Framework.trackFile(tempFile, this);
         }
-        
+
         return f;
     }
-    
+
 }
