@@ -84,7 +84,7 @@ public class CCExtractorWork extends AbstractWork {
         Blob result = null;
         if (originalVideo != null) {
             CCExtractor cce = new CCExtractor(originalVideo.getBlob());
-            result = cce.extractCC("txt");
+            result = cce.extractCC("ttxt");
         }
         saveDocument(result);
     }
@@ -100,9 +100,6 @@ public class CCExtractorWork extends AbstractWork {
         initSession();
         DocumentModel doc = session.getDocument(new IdRef(docId));
         if (inClosedCaptions != null) {
-            if (!doc.hasFacet(FACET_VIDEO_CLOSED_CAPTIONS)) {
-                doc.addFacet(FACET_VIDEO_CLOSED_CAPTIONS);
-            }
             doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH,
                     (Serializable) inClosedCaptions);
             doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH,
@@ -110,7 +107,6 @@ public class CCExtractorWork extends AbstractWork {
         } else {
             doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH, null);
             doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH, null);
-            doc.removeFacet(FACET_VIDEO_CLOSED_CAPTIONS);
         }
 
         // It may happen the async. job is done while, in the meantime, the user

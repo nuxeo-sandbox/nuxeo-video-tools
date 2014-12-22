@@ -48,11 +48,9 @@ public class VideoBeforeModificationListener implements EventListener {
         if (ABOUT_TO_CREATE.equals(event.getName())
                 || BEFORE_DOC_UPDATE.equals(event.getName())) {
             if (doc.hasFacet(VideoConstants.VIDEO_FACET)
-                    && doc.hasFacet(FACET_VIDEO_CLOSED_CAPTIONS)
                     && doc.getPropertyValue("file:content") == null) {
                 doc.setPropertyValue(CLOSED_CAPTIONS_BLOB_XPATH, null);
                 doc.setPropertyValue(CLOSED_CAPTIONS_FILENAME_XPATH, null);
-                doc.removeFacet(FACET_VIDEO_CLOSED_CAPTIONS);
                 // No save here because we are in "beforeModification" or
                 // "aboutToCreate" => nuxeo will save the doc later
             }
