@@ -1,4 +1,4 @@
-<component name="org.nuxeo.video.tools.operations.ExtractClosedCaptionsOp">
+<component name="org.nuxeo.video.tools.operations">
 
   <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
     point="operations" >

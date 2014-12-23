@@ -44,7 +44,7 @@ public class CCExtractorWork extends AbstractWork {
 
     private static final Log log = LogFactory.getLog(CCExtractorWork.class);
 
-    public static final String CATEGORY_VIDEO_EXTRACT_CLOSED_CAPTIONS = "videoClosedCaptionsExtractor";
+    public static final String CATEGORY_VIDEO_CLOSED_CAPTIONS_EXTRACTOR = "videoClosedCaptionsExtractor";
 
     public static final String VIDEO_EXTRACT_CLOSED_CAPTIONS_DONE_EVENT = "videoClosedCaptionsExtractionDone";
 
@@ -59,7 +59,7 @@ public class CCExtractorWork extends AbstractWork {
 
     @Override
     public String getCategory() {
-        return CATEGORY_VIDEO_EXTRACT_CLOSED_CAPTIONS;
+        return CATEGORY_VIDEO_CLOSED_CAPTIONS_EXTRACTOR;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class CCExtractorWork extends AbstractWork {
     protected void fireClosedCaptionsExtractionDoneEvent(DocumentModel doc) {
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         List<String> workIds = workManager.listWorkIds(
-                CATEGORY_VIDEO_EXTRACT_CLOSED_CAPTIONS, null);
+                CATEGORY_VIDEO_CLOSED_CAPTIONS_EXTRACTOR, null);
         String idPrefix = computeIdPrefix(repositoryName, docId);
         int worksCount = 0;
         for (String workId : workIds) {
