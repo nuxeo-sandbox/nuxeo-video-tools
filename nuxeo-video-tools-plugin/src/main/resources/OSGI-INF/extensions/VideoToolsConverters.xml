@@ -5,14 +5,14 @@
 		point="converter">
 
 		<converter name="videoToClosedCaptions"
-			class="org.nuxeo.video.tools.VideoToolsCommandLineConverter">
+			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
 			<parameters>
 				<parameter name="CommandLineName">videoToClosedCaptions</parameter>
 			</parameters>
 		</converter>
 
 		<converter name="videoToClosedCaptionsSliced"
-			class="org.nuxeo.video.tools.VideoToolsCommandLineConverter">
+			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
 			<parameters>
 				<parameter name="CommandLineName">videoToClosedCaptionsSliced</parameter>
 			</parameters>

@@ -41,11 +41,11 @@ import org.nuxeo.ecm.core.convert.cache.SimpleCachableBlobHolder;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.convert.plugins.CommandLineBasedConverter;
 
-public class VideoToolsCommandLineConverter extends CommandLineBasedConverter {
+public class CCExtractorCommandLineConverter extends CommandLineBasedConverter {
 
-    public static final Log log = LogFactory.getLog(VideoToolsCommandLineConverter.class);
+    public static final Log log = LogFactory.getLog(CCExtractorCommandLineConverter.class);
 
-    public VideoToolsCommandLineConverter() throws Exception {
+    public CCExtractorCommandLineConverter() throws Exception {
         super();
     }
 

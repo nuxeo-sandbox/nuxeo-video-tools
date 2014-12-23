@@ -38,6 +38,16 @@ import org.nuxeo.ecm.platform.video.Video;
 import org.nuxeo.ecm.platform.video.VideoDocument;
 import org.nuxeo.runtime.api.Framework;
 
+/**
+ * This class is a "Worker", contributed in the VideoToolsWorks.xml extension.
+ * <p>
+ * As a worker, it runs asynchronously in a separated thread.
+ * <p>
+ * The work itself is quite basic: Just call <code>CCExtractor</code> and get
+ * the result, if any.
+ *
+ * @since 7.1
+ */
 public class CCExtractorWork extends AbstractWork {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +57,7 @@ public class CCExtractorWork extends AbstractWork {
     public static final String CATEGORY_VIDEO_CLOSED_CAPTIONS_EXTRACTOR = "videoClosedCaptionsExtractor";
 
     public static final String VIDEO_EXTRACT_CLOSED_CAPTIONS_DONE_EVENT = "videoClosedCaptionsExtractionDone";
-
+    
     protected static String computeIdPrefix(String repositoryName, String docId) {
         return repositoryName + ':' + docId + ":closedCaptionsExtraction:";
     }

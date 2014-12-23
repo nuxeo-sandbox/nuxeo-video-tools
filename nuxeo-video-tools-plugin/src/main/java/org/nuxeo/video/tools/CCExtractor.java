@@ -76,6 +76,10 @@ public class CCExtractor extends BaseVideoTools {
     public Blob extractCC(String theOutFormat) {
 
         Blob blobCC = null;
+        
+        if(blob == null) {
+            return null;
+        }
 
         ConversionService conversionService = Framework.getService(ConversionService.class);
 

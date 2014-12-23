@@ -44,10 +44,10 @@ import static org.nuxeo.ecm.platform.video.VideoConstants.VIDEO_CHANGED_EVENT;
  * document, we must handle this in a dedicated event
  * 
  */
-public class VideoClosedCaptionsListener implements
+public class CCExtractorListener implements
         PostCommitFilteringEventListener {
 
-    public static final Log log = LogFactory.getLog(VideoClosedCaptionsListener.class);
+    public static final Log log = LogFactory.getLog(CCExtractorListener.class);
 
     @Override
     public void handleEvent(EventBundle events) throws ClientException {
