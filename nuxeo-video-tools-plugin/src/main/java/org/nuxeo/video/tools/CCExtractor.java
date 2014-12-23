@@ -44,11 +44,11 @@ public class CCExtractor extends BaseVideoTools {
     public static final String CONVERTER_FULL_VIDEO = "videoToClosedCaptions";
 
     public static final String CONVERTER_SLICED_VIDEO = "videoToClosedCaptionsSliced";
-    
+
     public static final String DEFAULT_OUTFORMAT = "ttxt";
-        
-    public static final List<String> TEXT_OUTFORMATS = 
-            Collections.unmodifiableList(Arrays.asList("srt", "txt", "ttxt"));
+
+    public static final List<String> TEXT_OUTFORMATS = Collections.unmodifiableList(Arrays.asList(
+            "srt", "txt", "ttxt"));
 
     String startAt;
 
@@ -68,7 +68,7 @@ public class CCExtractor extends BaseVideoTools {
     public Blob extractCC() {
         return extractCC(null);
     }
-    
+
     protected boolean isTextOutFormat(String inFormat) {
         return TEXT_OUTFORMATS.contains(inFormat);
     }
@@ -76,8 +76,8 @@ public class CCExtractor extends BaseVideoTools {
     public Blob extractCC(String theOutFormat) {
 
         Blob blobCC = null;
-        
-        if(blob == null) {
+
+        if (blob == null) {
             return null;
         }
 
@@ -102,7 +102,7 @@ public class CCExtractor extends BaseVideoTools {
         if (result != null) {
             blobCC = result.getBlob();
             blobCC.setFilename(blob.getFilename() + "." + theOutFormat);
-            if(isTextOutFormat(theOutFormat)) {
+            if (isTextOutFormat(theOutFormat)) {
                 blobCC.setMimeType("text/plain");
             }
         }

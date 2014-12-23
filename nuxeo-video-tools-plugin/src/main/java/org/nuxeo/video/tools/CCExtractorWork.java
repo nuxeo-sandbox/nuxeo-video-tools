@@ -57,7 +57,7 @@ public class CCExtractorWork extends AbstractWork {
     public static final String CATEGORY_VIDEO_CLOSED_CAPTIONS_EXTRACTOR = "videoClosedCaptionsExtractor";
 
     public static final String VIDEO_EXTRACT_CLOSED_CAPTIONS_DONE_EVENT = "videoClosedCaptionsExtractionDone";
-    
+
     protected static String computeIdPrefix(String repositoryName, String docId) {
         return repositoryName + ':' + docId + ":closedCaptionsExtraction:";
     }

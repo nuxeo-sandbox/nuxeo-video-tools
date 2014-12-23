@@ -29,7 +29,8 @@
 
 		<command name="videoToClosedCaptions" enabled="true">
 			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o #{outFilePath}</parameterString>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o
+				#{outFilePath}</parameterString>
 			<installationDirective>You need to install ccextractor.
 			</installationDirective>
 		</command>

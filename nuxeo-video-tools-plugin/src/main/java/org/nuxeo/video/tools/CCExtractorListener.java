@@ -1,5 +1,5 @@
 /*
- * (C) Copyright ${year} Nuxeo SA (http://nuxeo.com/) and contributors.
+ * (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and contributors.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * Contributors:
- *     thibaud
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.video.tools;
@@ -44,8 +44,7 @@ import static org.nuxeo.ecm.platform.video.VideoConstants.VIDEO_CHANGED_EVENT;
  * document, we must handle this in a dedicated event
  * 
  */
-public class CCExtractorListener implements
-        PostCommitFilteringEventListener {
+public class CCExtractorListener implements PostCommitFilteringEventListener {
 
     public static final Log log = LogFactory.getLog(CCExtractorListener.class);
 

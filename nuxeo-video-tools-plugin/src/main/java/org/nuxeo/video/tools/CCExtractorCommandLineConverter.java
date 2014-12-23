@@ -50,7 +50,8 @@ public class CCExtractorCommandLineConverter extends CommandLineBasedConverter {
     }
 
     @Override
-    protected BlobHolder buildResult(List<String> cmdOutput, CmdParameters cmdParams) {
+    protected BlobHolder buildResult(List<String> cmdOutput,
+            CmdParameters cmdParams) {
 
         String outputPath = cmdParams.getParameters().get("outDirPath");
         File outputDir = new File(outputPath);
@@ -63,7 +64,7 @@ public class CCExtractorCommandLineConverter extends CommandLineBasedConverter {
             blob.setFilename(file.getName());
             blobs.add(blob);
         }
-        
+
         return new SimpleCachableBlobHolder(blobs);
     }
 
@@ -80,7 +81,7 @@ public class CCExtractorCommandLineConverter extends CommandLineBasedConverter {
         return cmdBlobParams;
     }
 
-    //#{sourceFilePath} -out=#{outFormat} -o #{outFileName}
+    // #{sourceFilePath} -out=#{outFormat} -o #{outFileName}
     @Override
     protected Map<String, String> getCmdStringParameters(BlobHolder blobHolder,
             Map<String, Serializable> parameters) throws ConversionException {
@@ -88,33 +89,36 @@ public class CCExtractorCommandLineConverter extends CommandLineBasedConverter {
         Map<String, String> cmdStringParams = new HashMap<String, String>();
 
         String baseDir = getTmpDirectory(parameters);
-        Path tmpPath = new Path(baseDir).append("NxVT_" + java.util.UUID.randomUUID().toString());
+        Path tmpPath = new Path(baseDir).append("NxVT_"
+                + java.util.UUID.randomUUID().toString());
 
         File outDir = new File(tmpPath.toString());
         boolean dirCreated = outDir.mkdir();
         if (!dirCreated) {
-            throw new ConversionException("Unable to create tmp dir for transformer output");
+            throw new ConversionException(
+                    "Unable to create tmp dir for transformer output");
         }
 
         cmdStringParams.put("outDirPath", outDir.getAbsolutePath());
-        
+
         // outFormat is a required parameter
         String outFormat = (String) parameters.get("outFormat");
         cmdStringParams.put("outFormat", outFormat);
-        
+
         String startAt = (String) parameters.get("startAt");
         String endAt = (String) parameters.get("endAt");
-        if(!StringUtils.isBlank(startAt) && !StringUtils.isBlank(endAt)) {
+        if (!StringUtils.isBlank(startAt) && !StringUtils.isBlank(endAt)) {
             cmdStringParams.put("startAt", startAt);
             cmdStringParams.put("endAt", endAt);
         }
 
         String fileName = blobHolder.getBlob().getFilename();
         int pos = fileName.lastIndexOf('.');
-        if(pos > -1) {
+        if (pos > -1) {
             fileName = fileName.substring(0, pos);
         }
-        String outFilePath = outDir.getAbsolutePath() + "/" + fileName + "." + outFormat;
+        String outFilePath = outDir.getAbsolutePath() + "/" + fileName + "."
+                + outFormat;
         cmdStringParams.put("outFilePath", outFilePath);
 
         return cmdStringParams;
