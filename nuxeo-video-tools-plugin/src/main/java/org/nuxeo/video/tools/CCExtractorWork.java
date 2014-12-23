@@ -115,7 +115,7 @@ public class CCExtractorWork extends AbstractWork {
             doc.putContextData(ALLOW_VERSION_WRITE, Boolean.TRUE);
         }
         session.saveDocument(doc);
-        fireClosedCaptionsExtractionDoneEvent(doc);
+        triggerClosedCaptionsExtractionDoneEvent(doc);
         setStatus("Done");
 
     }
@@ -125,23 +125,20 @@ public class CCExtractorWork extends AbstractWork {
         VideoDocument videoDocument = doc.getAdapter(VideoDocument.class);
         Video video = videoDocument.getVideo();
         if (video == null) {
-            log.warn("No video file avilable for: " + doc);
+            log.warn("No video file available for: " + doc);
         }
         return video;
     }
 
-    protected void fireClosedCaptionsExtractionDoneEvent(DocumentModel doc) {
+    protected void triggerClosedCaptionsExtractionDoneEvent(DocumentModel doc) {
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         List<String> workIds = workManager.listWorkIds(
                 CATEGORY_VIDEO_CLOSED_CAPTIONS_EXTRACTOR, null);
         String idPrefix = computeIdPrefix(repositoryName, docId);
-        int worksCount = 0;
         for (String workId : workIds) {
             if (workId.startsWith(idPrefix)) {
-                if (++worksCount > 1) {
-                    // another work scheduled
-                    return;
-                }
+                // At least another work scheduled
+                return;
             }
         }
 
