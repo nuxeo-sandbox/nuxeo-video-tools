@@ -1,5 +1,4 @@
-/*
- * (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and contributors.
+/* (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and contributors.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
@@ -14,6 +13,7 @@
  * Contributors:
  *     Thibaud Arguillere
  */
+
 package org.nuxeo.video.tools;
 
 import java.io.File;
@@ -21,19 +21,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.convert.api.ConversionException;
 
-public class CCExtractorCommandLineConverter extends
+public class VideoSlicerCommandLineConverter extends
         BaseVideoToolsCommandLineConverter {
 
-    public static final Log log = LogFactory.getLog(CCExtractorCommandLineConverter.class);
+    public static final Log log = LogFactory.getLog(VideoSlicerCommandLineConverter.class);
 
-    // #{sourceFilePath} -out=#{outFormat} -o #{outFileName}
+    // -i #{sourceFilePath} -ss #{start} -t #{duration} -acodec copy -vcodec
+    // copy #{outFilePath}
     @Override
     protected Map<String, String> getCmdStringParameters(BlobHolder blobHolder,
             Map<String, Serializable> parameters) throws ConversionException {
@@ -53,26 +53,21 @@ public class CCExtractorCommandLineConverter extends
 
         cmdStringParams.put("outDirPath", outDir.getAbsolutePath());
 
-        // outFormat is a required parameter
-        String outFormat = (String) parameters.get("outFormat");
-        cmdStringParams.put("outFormat", outFormat);
-
-        String startAt = (String) parameters.get("startAt");
-        String endAt = (String) parameters.get("endAt");
-        if (!StringUtils.isBlank(startAt) && !StringUtils.isBlank(endAt)) {
-            cmdStringParams.put("startAt", startAt);
-            cmdStringParams.put("endAt", endAt);
-        }
+        String start = (String) parameters.get("start");
+        String duration = (String) parameters.get("duration");
+        cmdStringParams.put("start", start);
+        cmdStringParams.put("duration", duration);
 
         String fileName = blobHolder.getBlob().getFilename();
-        int pos = fileName.lastIndexOf('.');
-        if (pos > -1) {
-            fileName = fileName.substring(0, pos);
-        }
-        String outFilePath = outDir.getAbsolutePath() + "/" + fileName + "."
-                + outFormat;
+        String suffix = start.replace(":", "") + "-"
+                + duration.replace(":", "");
+        fileName = BaseVideoToolsCommandLineConverter.addSuffixToFileName(
+                fileName, suffix);
+
+        String outFilePath = outDir.getAbsolutePath() + "/" + fileName;
         cmdStringParams.put("outFilePath", outFilePath);
 
         return cmdStringParams;
     }
+
 }

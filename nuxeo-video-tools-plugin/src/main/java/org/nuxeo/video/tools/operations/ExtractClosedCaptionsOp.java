@@ -17,6 +17,9 @@
 
 package org.nuxeo.video.tools.operations;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -25,9 +28,13 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
+import org.nuxeo.ecm.core.api.model.PropertyException;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.video.tools.CCExtractor;
 
 /**
@@ -46,24 +53,37 @@ public class ExtractClosedCaptionsOp {
 
     @Param(name = "endAt", required = false)
     protected String endAt;
+    
+    @Param(name = "neverReturnNull", required = false, values = { "false" })
+    protected boolean neverReturnNull;
 
     @Param(name = "xpath", required = false, values = { "file:content" })
     protected String xpath;
 
     @OperationMethod
-    public Blob run(DocumentModel inDoc) {
+    public Blob run(DocumentModel inDoc) throws IOException {
 
         return run((Blob) inDoc.getPropertyValue("file:content"));
 
     }
 
     @OperationMethod
-    public Blob run(Blob inBlob) {
+    public Blob run(Blob inBlob) throws IOException {
 
         Blob result = null;
 
         CCExtractor cce = new CCExtractor(inBlob, startAt, endAt);
         result = cce.extractCC(outFormat);
+        
+        if(result == null && neverReturnNull) {
+            File tempFile = File.createTempFile("NxVT-", "txt");
+            tempFile.deleteOnExit();
+            Framework.trackFile(tempFile, this);
+            FileBlob fb = new FileBlob(tempFile);
+            fb.setMimeType("text/plain");
+            fb.setFilename(inBlob.getFilename() + "-noCC.txt");
+            return fb;
+        }
 
         return result;
     }

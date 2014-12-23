@@ -4,5 +4,10 @@
     point="operations" >
       <operation class="org.nuxeo.video.tools.operations.ExtractClosedCaptionsOp" />
    </extension>
+   
+   <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+    point="operations" >
+      <operation class="org.nuxeo.video.tools.operations.VideoSlicerOp" />
+   </extension>
     
 </component>

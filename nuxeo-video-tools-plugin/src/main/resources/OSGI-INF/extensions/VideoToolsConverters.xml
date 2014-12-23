@@ -4,17 +4,24 @@
 	<extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl"
 		point="converter">
 
-		<converter name="videoToClosedCaptions"
+		<converter name="videoClosedCaptionsExtractor"
 			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
 			<parameters>
-				<parameter name="CommandLineName">videoToClosedCaptions</parameter>
+				<parameter name="CommandLineName">videoClosedCaptionsExtractor</parameter>
 			</parameters>
 		</converter>
 
-		<converter name="videoToClosedCaptionsSliced"
+		<converter name="videoPartClosedCaptionsExtractor"
 			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
 			<parameters>
-				<parameter name="CommandLineName">videoToClosedCaptionsSliced</parameter>
+				<parameter name="CommandLineName">videoPartClosedCaptionsExtractor</parameter>
+			</parameters>
+		</converter>
+
+		<converter name="videoSlicer"
+			class="org.nuxeo.video.tools.VideoSlicerCommandLineConverter">
+			<parameters>
+				<parameter name="CommandLineName">videoSlicer</parameter>
 			</parameters>
 		</converter>
 
@@ -27,18 +34,28 @@
 		target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
 		point="command">
 
-		<command name="videoToClosedCaptions" enabled="true">
+		<command name="videoClosedCaptionsExtractor" enabled="true">
 			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o
-				#{outFilePath}</parameterString>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o #{outFilePath}
+			</parameterString>
 			<installationDirective>You need to install ccextractor.
 			</installationDirective>
 		</command>
 
-		<command name="videoToClosedCaptionsSliced" enabled="true">
+		<command name="videoPartClosedCaptionsExtractor" enabled="true">
 			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -trim -o #{outFilePath}</parameterString>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -trim -o #{outFilePath}
+			</parameterString>
 			<installationDirective>You need to install ccextractor.
+			</installationDirective>
+		</command>
+
+		<command name="videoSlicer" enabled="true">
+			<commandLine>ffmpeg</commandLine>
+			<!-- The two 'copy' switches make the cutting much faster because it does 
+				not encode the output file. -->
+			<parameterString>-i #{sourceFilePath} -ss #{start} -t #{duration} -acodec copy -vcodec copy #{outFilePath}</parameterString>
+			<installationDirective>You need to install ffmpeg.
 			</installationDirective>
 		</command>
 
