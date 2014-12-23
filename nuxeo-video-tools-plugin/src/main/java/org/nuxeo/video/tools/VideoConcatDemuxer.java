@@ -54,7 +54,11 @@ import org.nuxeo.runtime.api.Framework;
  * if the duration is incorrect (because it was computed using the bit-rate or
  * because the file is truncated, for example), it can cause artifacts. The
  * duration directive can be used to override the duration stored in each file.
- * </quote>
+ * 
+ * [snip]
+ * 
+ * The concat demuxer can support variable frame rate, but it currently requires
+ * that all files have the same time base for the corresponding files. </quote>
  * 
  *
  * @since TODO
