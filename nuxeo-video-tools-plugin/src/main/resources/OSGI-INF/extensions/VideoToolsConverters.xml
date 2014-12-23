@@ -1,5 +1,10 @@
 <component name="org.nuxeo.video.tools.converters">
 
+  <!--
+    IMPORTANT: DO NOT Eclipse Source->Format, because we want the command line to 
+    stay on one single line (or it may fail under Windows)
+    -->
+
 	<!-- The converters -->
 	<extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl"
 		point="converter">

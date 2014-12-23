@@ -61,7 +61,7 @@ public class VideoSlicerCommandLineConverter extends
         String fileName = blobHolder.getBlob().getFilename();
         String suffix = start.replace(":", "") + "-"
                 + duration.replace(":", "");
-        fileName = BaseVideoToolsCommandLineConverter.addSuffixToFileName(
+        fileName = VideoToolsUtilities.addSuffixToFileName(
                 fileName, suffix);
 
         String outFilePath = outDir.getAbsolutePath() + "/" + fileName;

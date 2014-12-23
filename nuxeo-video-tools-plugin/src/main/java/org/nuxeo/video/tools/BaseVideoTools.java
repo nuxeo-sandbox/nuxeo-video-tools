@@ -49,24 +49,8 @@ public abstract class BaseVideoTools {
      * @since 7.1
      */
     public File getBlobFile() throws IOException {
-
-        File f = null;
-
-        try {
-            f = BlobHelper.getFileFromBlob(blob);
-        } finally {
-            // Nothing
-        }
-
-        if (f == null) {
-
-            File tempFile = File.createTempFile("NxVT-", "");
-            blob.transferTo(tempFile);
-            tempFile.deleteOnExit();
-            Framework.trackFile(tempFile, this);
-        }
-
-        return f;
+        
+        return VideoToolsUtilities.getBlobFile(blob);
     }
 
 }

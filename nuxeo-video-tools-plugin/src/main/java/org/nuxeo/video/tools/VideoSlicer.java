@@ -61,7 +61,7 @@ public class VideoSlicer extends BaseVideoTools {
                 parameters);
         if (result != null) {
             sliced = result.getBlob();
-            String fileName = BaseVideoToolsCommandLineConverter.addSuffixToFileName(
+            String fileName = VideoToolsUtilities.addSuffixToFileName(
                     blob.getFilename(), "-" + start.replaceAll(":", "") + "-"
                             + duration.replaceAll(":", ""));
             sliced.setFilename(fileName);

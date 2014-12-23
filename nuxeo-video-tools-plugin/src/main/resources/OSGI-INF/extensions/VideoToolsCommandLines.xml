@@ -1,0 +1,22 @@
+<component name="org.nuxeo.video.tools.commandlines">
+
+	<require>org.nuxeo.ecm.platform.commandline.executor.service.defaultContrib
+	</require>
+
+	<!-- IMPORTANT: DO NOT Eclipse Source->Format, because we want the command 
+		line to stay on one single line (or it may fail under Windows) -->
+	<extension
+		target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
+		point="command">
+
+		<!-- USing ffmpeg demuxer (https://trac.ffmpeg.org/wiki/Concatenate) -->
+		<command name="concatVideos-demuxer" enabled="true">
+			<commandLine>ffmpeg</commandLine>
+			<parameterString>-f concat -i #{listFilePath} -c copy #{outFilePath}</parameterString>
+			<installationDirective>You need to install ffmpeg.
+			</installationDirective>
+		</command>
+
+	</extension>
+
+</component>

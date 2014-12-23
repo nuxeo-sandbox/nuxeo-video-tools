@@ -60,22 +60,4 @@ public abstract class BaseVideoToolsCommandLineConverter extends
         }
         return cmdBlobParams;
     }
-
-    /*
-     * Adds the suffix before the file extension, if any
-     */
-    public static String addSuffixToFileName(String inFileName, String inSuffix) {
-        if (inFileName == null || inFileName.isEmpty() || inSuffix == null
-                || inSuffix.isEmpty()) {
-            return inFileName;
-        }
-
-        int dotIndex = inFileName.lastIndexOf('.');
-        if (dotIndex < 0) {
-            return inFileName + inSuffix;
-        }
-
-        return inFileName.substring(0, dotIndex) + inSuffix
-                + inFileName.substring(dotIndex);
-    }
 }
