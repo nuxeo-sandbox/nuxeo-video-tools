@@ -31,7 +31,7 @@ import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
 import org.nuxeo.runtime.api.Framework;
 
 /**
- * See https://trac.ffmpeg.org/wiki/Concatenate
+ * We use ffmpeg demuxer (see https://trac.ffmpeg.org/wiki/Concatenate)
  * 
  * Syntax is: ffmpeg -f concat -i mylist.txt -c copy output
  * <p>
@@ -60,8 +60,8 @@ import org.nuxeo.runtime.api.Framework;
  * The concat demuxer can support variable frame rate, but it currently requires
  * that all files have the same time base for the corresponding files. </quote>
  * 
- *
- * @since TODO
+ * So basically, this will work with movies of the same type and same timestamps.
+ * @since 7.1
  */
 public class VideoConcatDemuxer {
 
@@ -90,7 +90,10 @@ public class VideoConcatDemuxer {
         return concat(null);
     }
 
-    // -f concat -i #{listFilePath} -c copy #{outFilePath}
+    /* The command line is:
+     * ffmpeg -f concat -i #{listFilePath} -c copy #{outFilePath}
+     * 
+     */
     public Blob concat(String inFinalFileName) throws IOException,
             CommandNotAvailable, ClientException {
 

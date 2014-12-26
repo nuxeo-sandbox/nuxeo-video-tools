@@ -33,6 +33,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.video.tools.CCExtractor;
+import org.nuxeo.video.tools.VideoConcatDemuxer;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
 import org.nuxeo.ecm.core.api.Blob;
@@ -40,6 +41,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.test.CoreFeature;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
+import org.nuxeo.ecm.platform.video.VideoHelper;
+import org.nuxeo.ecm.platform.video.VideoInfo;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -49,7 +52,9 @@ import com.google.inject.Inject;
 @RunWith(FeaturesRunner.class)
 @Features({ PlatformFeature.class, CoreFeature.class,
         EmbeddedAutomationServerFeature.class })
-@Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor" })
+@Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor",
+        "org.nuxeo.ecm.platform.video.core",
+        "org.nuxeo.ecm.platform.video.convert" })
 public class VideoToolsTest {
 
     protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
@@ -79,19 +84,18 @@ public class VideoToolsTest {
     public void cleanup() {
 
     }
-    
+
     protected String fileBlobToString(FileBlob inBlob) throws IOException {
 
         File f = inBlob.getFile();
         Path p = Paths.get(f.getAbsolutePath());
-        
+
         return new String(Files.readAllBytes(p));
     }
 
-    @Ignore
     @Test
     public void testExtractCC() throws Exception {
-        
+
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
 
         File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
@@ -103,16 +107,16 @@ public class VideoToolsTest {
 
         // It should be a FileBlob
         assertTrue(result instanceof FileBlob);
-        
+
         String cc = fileBlobToString((FileBlob) result);
         assertNotNull(cc);
         assertNotEquals("", cc);
-        
+
     }
 
     @Test
     public void testExtractCC_sliced() throws Exception {
-        
+
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
 
         File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
@@ -124,10 +128,50 @@ public class VideoToolsTest {
 
         // It should be a FileBlob
         assertTrue(result instanceof FileBlob);
-        
+
         String cc = fileBlobToString((FileBlob) result);
         assertNotNull(cc);
         assertNotEquals("", cc);
+
+    }
+
+    @Test
+    public void testConcatDemuxer() throws Exception {
+
+        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+
+        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+        File f2 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0010-08.mp4");
+        File f3 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0020-09.mp4");
+        File f4 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0030-10.mp4");
+
+        FileBlob fb1 = new FileBlob(f1);
+        FileBlob fb2 = new FileBlob(f2);
+        FileBlob fb3 = new FileBlob(f3);
+        FileBlob fb4 = new FileBlob(f4);
         
+        VideoInfo vi;
+        vi = VideoHelper.getVideoInfo(fb1);
+        double d1 = vi.getDuration();
+        vi = VideoHelper.getVideoInfo(fb2);
+        double d2 = vi.getDuration();
+        vi = VideoHelper.getVideoInfo(fb3);
+        double d3 = vi.getDuration();
+        vi = VideoHelper.getVideoInfo(fb4);
+        double d4 = vi.getDuration();
+
+        VideoConcatDemuxer vc = new VideoConcatDemuxer();
+        vc.addBlob(fb1);
+        vc.addBlob(fb2);
+        vc.addBlob(fb3);
+        vc.addBlob(fb4);
+
+        Blob result = vc.concat();
+        assertNotNull(result);
+        vi = VideoHelper.getVideoInfo(result);
+        double dFinal = vi.getDuration();
+
+        assertEquals(dFinal, d1 + d2 + d3 + d4, 0);
+
     }
 }
