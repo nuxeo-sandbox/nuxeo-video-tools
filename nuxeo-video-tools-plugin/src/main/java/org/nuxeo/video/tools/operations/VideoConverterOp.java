@@ -14,7 +14,6 @@
  * Contributors:
  *     Thibaud Arguillere
  */
-
 package org.nuxeo.video.tools.operations;
 
 import org.nuxeo.ecm.automation.core.Constants;
@@ -23,29 +22,34 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.video.tools.VideoConverter;
 import org.nuxeo.video.tools.VideoSlicer;
 
-/**
- * 
- */
-@Operation(id = VideoSlicerOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Slice", description = "")
-public class VideoSlicerOp {
+@Operation(id = VideoConverterOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Convert", description = "Use either <code>height</code> <i>or</i> <code>scale</scale>. If both are > 0, the operation uses <code>height</code>")
+public class VideoConverterOp {
 
-    public static final String ID = "Video.Slice";
+    public static final String ID = "Video.Convert";
 
-    @Param(name = "start", required = false)
-    protected String start;
+    @Param(name = "height", required = false)
+    protected long height;
 
-    @Param(name = "duration", required = false)
-    protected String duration;
+    @Param(name = "scale", required = false)
+    protected double scale;
+
+    @Param(name = "converter", required = false)
+    protected String converter;
 
     @OperationMethod(collector = BlobCollector.class)
     public Blob run(Blob inBlob) {
 
         Blob result = null;
 
-        VideoSlicer slicer = new VideoSlicer(inBlob, start, duration);
-        result = slicer.slice();
+        VideoConverter vc = new VideoConverter(inBlob);
+        if (height > 0) {
+            result = vc.convert(height, converter);
+        } else {
+            result = vc.convert(scale, converter);
+        }
 
         return result;
     }

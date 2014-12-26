@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.video.tools.CCExtractor;
 import org.nuxeo.video.tools.VideoConcatDemuxer;
+import org.nuxeo.video.tools.VideoConverter;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
 import org.nuxeo.ecm.core.api.Blob;
@@ -54,7 +55,8 @@ import com.google.inject.Inject;
         EmbeddedAutomationServerFeature.class })
 @Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor",
         "org.nuxeo.ecm.platform.video.core",
-        "org.nuxeo.ecm.platform.video.convert" })
+        "org.nuxeo.ecm.platform.video.convert",
+        "org.nuxeo.ecm.platform.picture.core"})
 public class VideoToolsTest {
 
     protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
@@ -93,6 +95,7 @@ public class VideoToolsTest {
         return new String(Files.readAllBytes(p));
     }
 
+    @Ignore
     @Test
     public void testExtractCC() throws Exception {
 
@@ -114,6 +117,7 @@ public class VideoToolsTest {
 
     }
 
+    @Ignore
     @Test
     public void testExtractCC_sliced() throws Exception {
 
@@ -135,6 +139,7 @@ public class VideoToolsTest {
 
     }
 
+    @Ignore
     @Test
     public void testConcatDemuxer() throws Exception {
 
@@ -149,7 +154,7 @@ public class VideoToolsTest {
         FileBlob fb2 = new FileBlob(f2);
         FileBlob fb3 = new FileBlob(f3);
         FileBlob fb4 = new FileBlob(f4);
-        
+
         VideoInfo vi;
         vi = VideoHelper.getVideoInfo(fb1);
         double d1 = vi.getDuration();
@@ -171,7 +176,57 @@ public class VideoToolsTest {
         vi = VideoHelper.getVideoInfo(result);
         double dFinal = vi.getDuration();
 
-        assertEquals(dFinal, d1 + d2 + d3 + d4, 0);
+        assertEquals(dFinal, d1 + d2 + d3 + d4, 0.0);
 
+    }
+
+    @Test
+    public void testConvert() throws Exception {
+
+        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+
+        VideoConverter vc;
+        Blob result;
+
+        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+        FileBlob fb1 = new FileBlob(f1);
+
+        VideoInfo vi;
+        vi = VideoHelper.getVideoInfo(fb1);
+        long originalH = vi.getHeight();
+        double originalD = vi.getDuration();
+
+        // Convert to WebM, Height 200
+        doLog("  - Convert to WebM, height 200...");
+        vc = new VideoConverter(fb1);
+        result = vc.convert(200, "convertToWebM");
+        assertNotNull(result);
+
+        vi = VideoHelper.getVideoInfo(result);
+        assertEquals(200, vi.getHeight());
+        assertEquals(originalD, vi.getDuration(), 0.0);
+
+        // Convert to WebM, original height
+        doLog("  - Convert to WebM, original height...");
+        vc = new VideoConverter(fb1);
+        result = vc.convert(0, "convertToWebM");
+        assertNotNull(result);
+
+        vi = VideoHelper.getVideoInfo(result);
+        assertEquals(originalH, vi.getHeight());
+        assertEquals(originalD, vi.getDuration(), 0.0);
+        
+        // Convert to WebM, half original size
+        doLog("  - Convert to WebM, half height...");
+        vc = new VideoConverter(fb1);
+        result = vc.convert(0.5, "convertToWebM");
+        assertNotNull(result);
+
+        vi = VideoHelper.getVideoInfo(result);
+        long expectedHeight = (long) (originalH * 0.5);
+        assertEquals(expectedHeight, vi.getHeight());
+        assertEquals(originalD, vi.getDuration(), 0.0);
+
+        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
     }
 }
