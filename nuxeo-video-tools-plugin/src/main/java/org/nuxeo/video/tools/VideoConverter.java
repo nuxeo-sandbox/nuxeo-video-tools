@@ -53,7 +53,7 @@ import org.nuxeo.runtime.api.Framework;
  * VideoConverter class, then make sure to use the same approach than nuxeo
  * original code.
  *
- * @since TODO
+ * @since 7.1
  */
 public class VideoConverter extends BaseVideoTools {
 

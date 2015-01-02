@@ -56,7 +56,7 @@ import com.google.inject.Inject;
 @Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor",
         "org.nuxeo.ecm.platform.video.core",
         "org.nuxeo.ecm.platform.video.convert",
-        "org.nuxeo.ecm.platform.picture.core"})
+        "org.nuxeo.ecm.platform.picture.core" })
 public class VideoToolsTest {
 
     protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
@@ -95,7 +95,6 @@ public class VideoToolsTest {
         return new String(Files.readAllBytes(p));
     }
 
-    @Ignore
     @Test
     public void testExtractCC() throws Exception {
 
@@ -115,9 +114,10 @@ public class VideoToolsTest {
         assertNotNull(cc);
         assertNotEquals("", cc);
 
+        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
+
     }
 
-    @Ignore
     @Test
     public void testExtractCC_sliced() throws Exception {
 
@@ -137,9 +137,10 @@ public class VideoToolsTest {
         assertNotNull(cc);
         assertNotEquals("", cc);
 
+        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
+
     }
 
-    @Ignore
     @Test
     public void testConcatDemuxer() throws Exception {
 
@@ -178,6 +179,8 @@ public class VideoToolsTest {
 
         assertEquals(dFinal, d1 + d2 + d3 + d4, 0.0);
 
+        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
+
     }
 
     @Test
@@ -196,36 +199,75 @@ public class VideoToolsTest {
         long originalH = vi.getHeight();
         double originalD = vi.getDuration();
 
-        // Convert to WebM, Height 200
-        doLog("  - Convert to WebM, height 200...");
+        // ------------------------------
+        doLog("  - MP4 -> WebM, height 200...");
         vc = new VideoConverter(fb1);
         result = vc.convert(200, "convertToWebM");
         assertNotNull(result);
-
+        assertEquals("video/webm", result.getMimeType());
         vi = VideoHelper.getVideoInfo(result);
         assertEquals(200, vi.getHeight());
         assertEquals(originalD, vi.getDuration(), 0.0);
 
-        // Convert to WebM, original height
-        doLog("  - Convert to WebM, original height...");
+        // ------------------------------
+        doLog("  - MP4 -> WebM, original height...");
         vc = new VideoConverter(fb1);
         result = vc.convert(0, "convertToWebM");
         assertNotNull(result);
-
+        assertEquals("video/webm", result.getMimeType());
         vi = VideoHelper.getVideoInfo(result);
         assertEquals(originalH, vi.getHeight());
         assertEquals(originalD, vi.getDuration(), 0.0);
-        
-        // Convert to WebM, half original size
-        doLog("  - Convert to WebM, half height...");
+
+        // ------------------------------
+        doLog("  - MP4 -> WebM, half height...");
         vc = new VideoConverter(fb1);
         result = vc.convert(0.5, "convertToWebM");
         assertNotNull(result);
-
+        assertEquals("video/webm", result.getMimeType());
         vi = VideoHelper.getVideoInfo(result);
         long expectedHeight = (long) (originalH * 0.5);
         assertEquals(expectedHeight, vi.getHeight());
         assertEquals(originalD, vi.getDuration(), 0.0);
+
+        // ------------------------------
+        // Just reduce size
+        doLog("  - MP4 -> MP4, reduce height...");
+        vc = new VideoConverter(fb1);
+        result = vc.convert(200, "convertToMP4");
+        assertNotNull(result);
+        assertEquals("video/mp4", result.getMimeType());
+        vi = VideoHelper.getVideoInfo(result);
+        assertEquals(200, vi.getHeight());
+        assertEquals(originalD, vi.getDuration(), 0.0);
+
+        // ------------------------------
+        doLog("  - MP4 -> AVI, height 200...");
+        vc = new VideoConverter(fb1);
+        result = vc.convert(200, "convertToAVI");
+        assertNotNull(result);
+        assertEquals("video/x-msvideo", result.getMimeType());
+        vi = VideoHelper.getVideoInfo(result);
+        assertEquals(200, vi.getHeight());
+        assertEquals(originalD, vi.getDuration(), 0.0);
+
+        // ------------------------------
+        // AVI->MP4, reduce height
+        f1 = FileUtils.getResourceFileFromContext("files/Test-AC3-v2.0.avi");
+        fb1 = new FileBlob(f1);
+        vi = VideoHelper.getVideoInfo(fb1);
+        originalH = vi.getHeight();
+        originalD = vi.getDuration();
+
+        doLog("  - AVI -> MP4, height 200...");
+        vc = new VideoConverter(fb1);
+        result = vc.convert(200, "convertToMP4");
+        assertNotNull(result);
+        assertEquals("video/mp4", result.getMimeType());
+        vi = VideoHelper.getVideoInfo(result);
+        assertEquals(200, vi.getHeight());
+        // Duration may not be the exact same in this conversion
+        assertEquals(originalD, vi.getDuration(), 0.3);
 
         doLog(getCurrentMethodName(new RuntimeException()) + ": done");
     }

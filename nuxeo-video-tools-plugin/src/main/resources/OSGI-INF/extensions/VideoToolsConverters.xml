@@ -1,11 +1,10 @@
 <component name="org.nuxeo.video.tools.converters">
 
-  <!--
-    IMPORTANT: DO NOT Eclipse Source->Format, because we want the command line to 
-    stay on one single line (or it may fail under Windows)
-    -->
+	<!-- IMPORTANT: DO NOT Eclipse Source->Format, because we want the command 
+		line to stay on one single line (or it may fail under Windows) -->
 
 	<!-- The converters -->
+	<require>org.nuxeo.ecm.platform.video.convert.converters</require>
 	<extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl"
 		point="converter">
 
@@ -19,7 +18,8 @@
 		<converter name="videoPartClosedCaptionsExtractor"
 			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
 			<parameters>
-				<parameter name="CommandLineName">videoPartClosedCaptionsExtractor</parameter>
+				<parameter name="CommandLineName">videoPartClosedCaptionsExtractor
+				</parameter>
 			</parameters>
 		</converter>
 
@@ -27,6 +27,27 @@
 			class="org.nuxeo.video.tools.VideoSlicerCommandLineConverter">
 			<parameters>
 				<parameter name="CommandLineName">videoSlicer</parameter>
+			</parameters>
+		</converter>
+
+		<!-- New converters to be used by the VideoConverter class. They are formated 
+			as nuxeo default converters, which means they expect the width/height (width 
+			is calculated by BaseVideoConversionConverter -->
+		<converter name="convertToAVI"
+			class="org.nuxeo.ecm.platform.video.convert.VideoConversionConverter">
+			<sourceMimeType>video/mpeg</sourceMimeType>
+			<sourceMimeType>video/mp4</sourceMimeType>
+			<sourceMimeType>video/quicktime</sourceMimeType>
+			<sourceMimeType>video/ogg</sourceMimeType>
+			<sourceMimeType>video/x-ms-asf</sourceMimeType>
+			<sourceMimeType>video/x-msvideo</sourceMimeType>
+			<sourceMimeType>video/flv</sourceMimeType>
+			<destinationMimeType>video/webm</destinationMimeType>
+			<parameters>
+				<parameter name="CommandLineName">convertToAVI</parameter>
+				<parameter name="videoMimeType">video/x-msvideo</parameter>
+				<parameter name="videoExtension">avi</parameter>
+				<parameter name="tmpDirectoryPrefix">convertToAVI</parameter>
 			</parameters>
 		</converter>
 
@@ -59,10 +80,17 @@
 			<commandLine>ffmpeg</commandLine>
 			<!-- The two 'copy' switches make the cutting much faster because it does 
 				not encode the output file. -->
-			<parameterString>-i #{sourceFilePath} -ss #{start} -t #{duration} -acodec copy -vcodec copy #{outFilePath}</parameterString>
+			<parameterString>-y -i #{sourceFilePath} -ss #{start} -t #{duration} -acodec copy -vcodec copy #{outFilePath}</parameterString>
 			<installationDirective>You need to install ffmpeg.
 			</installationDirective>
 		</command>
+
+	    <command name="convertToAVI" enabled="true">
+	      <commandLine>ffmpeg</commandLine>
+	      <parameterString> -i #{inFilePath} -s #{width}x#{height} -q:v 0 -vcodec mpeg4 -acodec ac3 #{outFilePath}</parameterString>
+	      <installationDirective>You need to install ffmpeg.
+	      </installationDirective>
+	    </command>
 
 	</extension>
 
