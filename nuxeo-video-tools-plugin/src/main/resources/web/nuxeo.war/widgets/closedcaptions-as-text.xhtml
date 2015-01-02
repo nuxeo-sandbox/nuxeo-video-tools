@@ -1,0 +1,27 @@
+<div xmlns:nxd="http://nuxeo.org/nxweb/document">
+
+<style>
+.cc_main_div {
+	height: 24px;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-left: : 5px;
+	font-size: smaller;
+}
+
+.cc_text {
+  border: 1px solid #888;
+}
+</style>
+
+<div id="closed-captions-#{currentDocument.id}" class="cc_main_div">
+	<textarea id="cc-text-#{currentDocument.id}" class="cc_text"></textarea>
+</div>
+
+<script src="#{contextPath}/scripts/ClosedCaptionsWidgetHandler.js" />
+<script type="text/javascript" charset="utf-8">
+jQuery(document).ready(function() {
+	displayClosedCaptions("#{currentDocument.id}", "closed-captions-#{currentDocument.id}", "cc-text-#{currentDocument.id}");
+});
+</script>
+</div>
