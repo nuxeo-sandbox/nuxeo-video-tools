@@ -16,11 +16,6 @@
  *     Thibaud Arguillere (https://github.com/ThibArg)
  */
 
-/* Most of the code comes from:
- * 		http://jsbin.com/pdfjs-prevnext-v2/6865/edit#html,live
- * I added first/last, button enable/disable, etc.
- */
-
 // Encapsulating everything to avoid collision with outside variable names
 // (for example, ctx is used elsewhere in the browser)
 function displayClosedCaptions(inDocId, inMainDivId, inTextAreaId) {
@@ -28,23 +23,23 @@ function displayClosedCaptions(inDocId, inMainDivId, inTextAreaId) {
 	var gMainDiv = jQuery("#" + inMainDivId);
 	var gTextArea = jQuery("#" + inTextAreaId);
 	
-	var theURL = "/nuxeo/site/automation/ImageCropInDocument";
+	var theURL = "/nuxeo/nxbigfile/default/" + inDocId + "/videocc:content/";
 	jQuery.ajax({
 		url		: theURL,
-		type	: "POST",
-		contentType: "application/json+nxrequest",
-		data	: JSON.stringify(automationParams),
-		headers	: {'X-NXVoidOperation': true}
+		type	: "GET",
+		/*contentType: "application/json",*/
+		headers	: {'Accept': "text/plain"}
 	})
-	.done( function() {
+	.done( function(data, textStatus, jqXHR) {
 		console.log("done done done done");
+		gTextArea.val(data);
 	})
 	.fail( function(jqXHR, textStatus, errorThrown) {
 		//alert("Dommage. Essaye encore.");
-		alert( "Request failed: " + textStatus )
+		alert( "Request failed: " + textStatus );
 	} );
 
-} // displayPDF
-//--EOF--
+} // displayClosedCaptions
+
 
 

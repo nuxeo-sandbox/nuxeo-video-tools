@@ -7,15 +7,21 @@
 	padding-right: 8px;
 	margin-left: : 5px;
 	font-size: smaller;
+  width:90%;
+  height:90%;
 }
 
-.cc_text {
+.cc_textarea {
   border: 1px solid #888;
+  width:90%;
+  height:90%;
 }
 </style>
 
 <div id="closed-captions-#{currentDocument.id}" class="cc_main_div">
-	<textarea id="cc-text-#{currentDocument.id}" class="cc_text"></textarea>
+	<textarea id="cc-text-#{currentDocument.id}" class="cc_textarea" readonly="readonly">
+	
+	</textarea>
 </div>
 
 <script src="#{contextPath}/scripts/ClosedCaptionsWidgetHandler.js" />
