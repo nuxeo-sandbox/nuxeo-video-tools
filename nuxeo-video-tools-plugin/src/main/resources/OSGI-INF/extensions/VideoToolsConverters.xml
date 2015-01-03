@@ -8,21 +8,6 @@
 	<extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl"
 		point="converter">
 
-		<converter name="videoClosedCaptionsExtractor"
-			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
-			<parameters>
-				<parameter name="CommandLineName">videoClosedCaptionsExtractor</parameter>
-			</parameters>
-		</converter>
-
-		<converter name="videoPartClosedCaptionsExtractor"
-			class="org.nuxeo.video.tools.CCExtractorCommandLineConverter">
-			<parameters>
-				<parameter name="CommandLineName">videoPartClosedCaptionsExtractor
-				</parameter>
-			</parameters>
-		</converter>
-
 		<converter name="videoSlicer"
 			class="org.nuxeo.video.tools.VideoSlicerCommandLineConverter">
 			<parameters>
@@ -59,22 +44,6 @@
 	<extension
 		target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
 		point="command">
-
-		<command name="videoClosedCaptionsExtractor" enabled="true">
-			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o #{outFilePath}
-			</parameterString>
-			<installationDirective>You need to install ccextractor.
-			</installationDirective>
-		</command>
-
-		<command name="videoPartClosedCaptionsExtractor" enabled="true">
-			<commandLine>ccextractor</commandLine>
-			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -trim -o #{outFilePath}
-			</parameterString>
-			<installationDirective>You need to install ccextractor.
-			</installationDirective>
-		</command>
 
 		<command name="videoSlicer" enabled="true">
 			<commandLine>ffmpeg</commandLine>

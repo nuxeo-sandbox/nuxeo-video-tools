@@ -34,6 +34,7 @@ import org.nuxeo.ecm.core.event.EventService;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.ecm.platform.video.Video;
 import org.nuxeo.ecm.platform.video.VideoDocument;
 import org.nuxeo.runtime.api.Framework;
@@ -94,7 +95,12 @@ public class CCExtractorWork extends AbstractWork {
         Blob result = null;
         if (originalVideo != null) {
             CCExtractor cce = new CCExtractor(originalVideo.getBlob());
-            result = cce.extractCC("ttxt");
+            try {
+                result = cce.extractCC("ttxt");
+            } catch (Exception e) {
+                log.error("Cannot extract the closed captions", e);
+                result = null;
+            }
         }
         saveDocument(result);
     }
@@ -102,7 +108,7 @@ public class CCExtractorWork extends AbstractWork {
     protected void saveDocument(Blob inClosedCaptions) {
 
         if (inClosedCaptions == null) {
-            setStatus("No Closed Captions, ot no video file");
+            setStatus("No Closed Captions, no video file, or an error occured");
         } else {
             setStatus("Saving Closed Captions");
         }

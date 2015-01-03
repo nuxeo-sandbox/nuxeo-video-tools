@@ -34,6 +34,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.model.PropertyException;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.video.tools.CCExtractor;
 
@@ -61,14 +62,14 @@ public class ExtractClosedCaptionsOp {
     protected String xpath;
 
     @OperationMethod
-    public Blob run(DocumentModel inDoc) throws IOException {
+    public Blob run(DocumentModel inDoc) throws IOException, CommandNotAvailable {
 
         return run((Blob) inDoc.getPropertyValue("file:content"));
 
     }
 
     @OperationMethod
-    public Blob run(Blob inBlob) throws IOException {
+    public Blob run(Blob inBlob) throws IOException, CommandNotAvailable {
 
         Blob result = null;
 

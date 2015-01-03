@@ -62,7 +62,7 @@ public class VideoToolsUtilities {
     }
     
     /**
-     * Build a filename, inserting the suffix bewteen the file extension.
+     * Build a filename, inserting the suffix between the file extension.
      * <p>
      * If the fileName has no extension, the suffix is just added.
      * <p>

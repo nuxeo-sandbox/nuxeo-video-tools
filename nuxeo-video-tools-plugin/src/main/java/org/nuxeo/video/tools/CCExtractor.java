@@ -17,6 +17,7 @@
 package org.nuxeo.video.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,9 +29,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
+import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
+import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
 import org.nuxeo.ecm.platform.picture.api.BlobHelper;
 import org.nuxeo.runtime.api.Framework;
 
@@ -47,9 +54,9 @@ public class CCExtractor extends BaseVideoTools {
 
     private static final Log log = LogFactory.getLog(CCExtractor.class);
 
-    public static final String CONVERTER_FULL_VIDEO = "videoClosedCaptionsExtractor";
+    public static final String COMMAND_FULL_VIDEO = "videoClosedCaptionsExtractor";
 
-    public static final String CONVERTER_SLICED_VIDEO = "videoPartClosedCaptionsExtractor";
+    public static final String COMMAND_SLICED_VIDEO = "videoPartClosedCaptionsExtractor";
 
     public static final String DEFAULT_OUTFORMAT = "ttxt";
 
@@ -71,7 +78,7 @@ public class CCExtractor extends BaseVideoTools {
         setEndAt(inEndAt);
     }
 
-    public Blob extractCC() {
+    public Blob extractCC() throws CommandNotAvailable, IOException {
         return extractCC(null);
     }
 
@@ -79,7 +86,8 @@ public class CCExtractor extends BaseVideoTools {
         return TEXT_OUTFORMATS.contains(inFormat);
     }
 
-    public Blob extractCC(String theOutFormat) {
+    public Blob extractCC(String theOutFormat) throws CommandNotAvailable,
+            IOException {
 
         Blob blobCC = null;
 
@@ -87,49 +95,69 @@ public class CCExtractor extends BaseVideoTools {
             return null;
         }
 
-        ConversionService conversionService = Framework.getService(ConversionService.class);
+        CmdParameters params = new CmdParameters();
 
-        BlobHolder source = new SimpleBlobHolder(blob);
-        Map<String, Serializable> parameters = new HashMap<String, Serializable>();
+        File sourceFile = getBlobFile();
+        params.addNamedParameter("sourceFilePath", sourceFile.getAbsolutePath());
 
         if (StringUtils.isBlank(theOutFormat)) {
             theOutFormat = DEFAULT_OUTFORMAT;
         }
-        parameters.put("outFormat", theOutFormat);
+        params.addNamedParameter("outFormat", theOutFormat);
 
-        BlobHolder result = null;
-        String converterName = CONVERTER_FULL_VIDEO;
+        String commandLineName = COMMAND_FULL_VIDEO;
         if (!StringUtils.isBlank(startAt) && !StringUtils.isBlank(endAt)) {
-            converterName = CONVERTER_SLICED_VIDEO;
-            parameters.put("startAt", startAt);
-            parameters.put("endAt", endAt);
-        }
-        // In case of problem, whatever the problem, we don't store the
-        // ClosedCations
-        try {
-            result = conversionService.convert(converterName, source,
-                    parameters);
-        } catch (Exception e) {
-            log.error("Error while extracting Closed Captions");
-            result = null;
+            commandLineName = COMMAND_SLICED_VIDEO;
+            params.addNamedParameter("startAt", startAt);
+            params.addNamedParameter("endAt", endAt);
         }
 
-        if (result != null) {
-            blobCC = result.getBlob();
-            // ccextractor always create a file, even if there is no captions.
-            // We must check if the file is empty or not, while handling BOMs of
-            // Unicode files.
-            // Let's say that less than 5 bytes, we don't have a caption.
-            File f = BlobHelper.getFileFromBlob(blobCC);
-            if (f.length() < 5) {
-                blobCC = null;
-                f.delete();
-            } else {
+        String baseDir = System.getProperty("java.io.tmpdir");
+        String fileName = blob.getFilename();
+        int pos = fileName.lastIndexOf('.');
+        if (pos > -1) {
+            fileName = fileName.substring(0, pos);
+        }
+
+        String outFilePath = baseDir + "CCE-"
+                + java.util.UUID.randomUUID().toString().replace("-", "") + "-"
+                + fileName + "." + theOutFormat;
+        params.addNamedParameter("outFilePath", outFilePath);
+
+        CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+        ExecResult clResult = cles.execCommand(commandLineName, params);
+
+        // Get the result, and first, handle errors.
+        if (clResult.getError() != null) {
+            throw new ClientException("Failed to execute the command <"
+                    + commandLineName + ">", clResult.getError());
+        }
+
+        if (!clResult.isSuccessful()) {
+            throw new ClientException("Failed to execute the command <"
+                    + commandLineName + ">. Final command [ "
+                    + clResult.getCommandLine() + " ] returned with error "
+                    + clResult.getReturnCode());
+        }
+
+        // Build the Blob
+        File resultFile = new File(outFilePath);
+        // ccextractor always create a file, even if there is no captions.
+        // We must check if the file is empty or not, while handling BOMs of
+        // Unicode files.
+        // Let's say that less than 5 bytes, we don't have a caption.
+        if (resultFile.exists()) {
+            if (resultFile.length() > 5) {
+                blobCC = new FileBlob(resultFile);
                 blobCC.setFilename(blob.getFilename() + "." + theOutFormat);
                 if (isTextOutFormat(theOutFormat)) {
                     blobCC.setMimeType("text/plain");
                 }
+                Framework.trackFile(resultFile, blobCC);
+            } else {
+                Framework.trackFile(resultFile, this);
             }
+            resultFile.deleteOnExit();
         }
 
         return blobCC;

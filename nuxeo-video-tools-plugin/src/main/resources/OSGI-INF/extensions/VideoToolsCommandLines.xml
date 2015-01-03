@@ -9,7 +9,23 @@
 		target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
 		point="command">
 
-		<!-- USing ffmpeg demuxer (https://trac.ffmpeg.org/wiki/Concatenate) -->
+		<command name="videoClosedCaptionsExtractor" enabled="true">
+			<commandLine>ccextractor</commandLine>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -trim -o #{outFilePath}
+			</parameterString>
+			<installationDirective>You need to install ccextractor.
+			</installationDirective>
+		</command>
+
+		<command name="videoPartClosedCaptionsExtractor" enabled="true">
+			<commandLine>ccextractor</commandLine>
+			<parameterString>#{sourceFilePath} -out=#{outFormat} -startat #{startAt} -endat #{endAt} -trim -o #{outFilePath}
+			</parameterString>
+			<installationDirective>You need to install ccextractor.
+			</installationDirective>
+		</command>
+
+		<!-- Using ffmpeg demuxer (https://trac.ffmpeg.org/wiki/Concatenate) -->
 		<command name="concatVideos-demuxer" enabled="true">
 			<commandLine>ffmpeg</commandLine>
 			<parameterString>-y -f concat -i #{listFilePath} -c copy #{outFilePath}</parameterString>
