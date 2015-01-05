@@ -49,14 +49,14 @@
 			<commandLine>ffmpeg</commandLine>
 			<!-- The two 'copy' switches make the cutting much faster because it does 
 				not encode the output file. -->
-			<parameterString>-y -i #{sourceFilePath} -ss #{start} -t #{duration} -acodec copy -vcodec copy #{outFilePath}</parameterString>
+			<parameterString>-y -i #{sourceFilePath} -ss #{start} -t #{duration} -c copy #{outFilePath}</parameterString>
 			<installationDirective>You need to install ffmpeg.
 			</installationDirective>
 		</command>
 
 	    <command name="convertToAVI" enabled="true">
 	      <commandLine>ffmpeg</commandLine>
-	      <parameterString> -i #{inFilePath} -s #{width}x#{height} -q:v 0 -vcodec mpeg4 -acodec ac3 #{outFilePath}</parameterString>
+	      <parameterString> -i #{inFilePath} -s #{width}x#{height} -q:v 0 -c:v mpeg4 -c:a ac3 #{outFilePath}</parameterString>
 	      <installationDirective>You need to install ffmpeg.
 	      </installationDirective>
 	    </command>
