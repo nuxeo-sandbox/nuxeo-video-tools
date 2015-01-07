@@ -34,7 +34,11 @@ import org.nuxeo.runtime.api.Framework;
 public abstract class BaseVideoTools {
 
     protected Blob blob;
-
+    
+    private static final File VIDEOTOOLS_TEMP_DIR = new File(System.getProperty("java.io.tmpdir") + "NuxeoVideoTools");
+    
+    private static String VIDEOTOOLS_TEMP_DIR_PATH;
+    
     public BaseVideoTools(Blob inBlob) {
         blob = inBlob;
     }
@@ -51,6 +55,20 @@ public abstract class BaseVideoTools {
     public File getBlobFile() throws IOException {
         
         return VideoToolsUtilities.getBlobFile(blob);
+    }
+    
+    public String getTempDirectoryPath() {
+        
+        if(VIDEOTOOLS_TEMP_DIR_PATH == null) {
+            synchronized (VIDEOTOOLS_TEMP_DIR) {
+                if(VIDEOTOOLS_TEMP_DIR_PATH == null) {
+                    VIDEOTOOLS_TEMP_DIR.mkdir();
+                    VIDEOTOOLS_TEMP_DIR_PATH = VIDEOTOOLS_TEMP_DIR.getAbsolutePath();
+                }
+            }
+        }
+        
+        return VIDEOTOOLS_TEMP_DIR_PATH;
     }
 
 }

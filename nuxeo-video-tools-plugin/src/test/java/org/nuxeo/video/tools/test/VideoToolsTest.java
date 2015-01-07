@@ -144,7 +144,41 @@ public class VideoToolsTest {
         doLog(getCurrentMethodName(new RuntimeException()) + ": done");
 
     }
-    
+
+    @Test
+    public void testSlice() throws Exception {
+        
+        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        
+        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+        FileBlob fb1 = new FileBlob(f1);
+        
+        VideoInfo vi;
+        
+        // Default slicer
+        doLog("    - Default slicer");
+        VideoSlicer vs = new VideoSlicer(fb1);
+        Blob result = vs.slice("0", "3");
+        assertNotNull(result);
+        vi = VideoHelper.getVideoInfo(result);
+        double dFinal = vi.getDuration();
+        assertEquals(3.0, dFinal, 0.0);
+
+        
+        // slicer-by-copy
+        doLog("    - Slicer by raw copy");
+        vs.setCommandLineName("videoSlicerByCopy");
+        result = vs.slice("0", "3");
+        assertNotNull(result);
+        vi = VideoHelper.getVideoInfo(result);
+        dFinal = vi.getDuration();
+        assertEquals(3.0, dFinal, 0.0);
+        
+
+        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
+    }
+
+    @Ignore
     @Test
     public void testSliceInParts() throws Exception {
 
@@ -161,6 +195,7 @@ public class VideoToolsTest {
         }
 
         doLog(getCurrentMethodName(new RuntimeException()) + ": done");
+        
         
     }
 

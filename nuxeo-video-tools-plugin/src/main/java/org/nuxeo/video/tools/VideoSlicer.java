@@ -16,6 +16,8 @@
  */
 package org.nuxeo.video.tools;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -23,28 +25,34 @@ import java.util.Map;
 
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
+import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
+import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
 import org.nuxeo.ecm.platform.video.VideoHelper;
 import org.nuxeo.ecm.platform.video.VideoInfo;
 import org.nuxeo.runtime.api.Framework;
 
 public class VideoSlicer extends BaseVideoTools {
 
-    public static final String CONVERTER_SLICE_DEFAULT = "videoSlicer";
+    public static final String COMMAND_SLICER_DEFAULT = "videoSlicer";
 
-    public static final String CONVERTER_SLICE_BY_COPY = "videoSlicerByCopy";
+    public static final String COMMAND_SLICER_BY_COPY = "videoSlicerByCopy";
 
     protected DecimalFormat s_msFormat = new DecimalFormat("#.###");
-    
-    protected String converterName = CONVERTER_SLICE_DEFAULT;
+
+    protected String commandLineName = COMMAND_SLICER_DEFAULT;
 
     public VideoSlicer(Blob inBlob) {
         super(inBlob);
     }
 
-    public Blob slice(String inStart, String inDuration) {
+    public Blob slice(String inStart, String inDuration) throws IOException, CommandNotAvailable {
 
         Blob sliced = null;
 
@@ -52,30 +60,53 @@ public class VideoSlicer extends BaseVideoTools {
             return null;
         }
 
-        ConversionService conversionService = Framework.getService(ConversionService.class);
+        CmdParameters params = new CmdParameters();
 
-        BlobHolder source = new SimpleBlobHolder(blob);
-        Map<String, Serializable> parameters = new HashMap<String, Serializable>();
+        // Get the final name, adding start/duration to the original name
+        String finalFileName = VideoToolsUtilities.addSuffixToFileName(
+                blob.getFilename(), "-" + inStart.replaceAll(":", "") + "-"
+                        + inDuration.replaceAll(":", ""));
 
-        parameters.put("start", inStart);
-        parameters.put("duration", inDuration);
+        // The source video
+        File sourceFile = getBlobFile();
+        params.addNamedParameter("sourceFilePath", sourceFile.getAbsolutePath());
 
-        BlobHolder result = conversionService.convert(converterName, source,
-                parameters);
-        if (result != null) {
-            sliced = result.getBlob();
-            String fileName = VideoToolsUtilities.addSuffixToFileName(
-                    blob.getFilename(), "-" + inStart.replaceAll(":", "") + "-"
-                            + inDuration.replaceAll(":", ""));
-            sliced.setFilename(fileName);
-            // The command-line does not change the format
-            sliced.setMimeType(blob.getMimeType());
+        // The temp destination file
+        String outFilePath = getTempDirectoryPath() + "/" + "VS-"
+                + java.util.UUID.randomUUID().toString().replace("-", "") + "-"
+                + finalFileName;
+        params.addNamedParameter("outFilePath", outFilePath);
+
+        params.addNamedParameter("start", inStart);
+        params.addNamedParameter("duration", inDuration);
+        
+        CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+        ExecResult clResult = cles.execCommand(commandLineName, params);
+        
+        // Get the result, and first, handle errors.
+        if (clResult.getError() != null) {
+            throw new ClientException("Failed to execute the command <"
+                    + commandLineName + ">", clResult.getError());
         }
+
+        if (!clResult.isSuccessful()) {
+            throw new ClientException("Failed to execute the command <"
+                    + commandLineName + ">. Final command [ "
+                    + clResult.getCommandLine() + " ] returned with error "
+                    + clResult.getReturnCode());
+        }
+
+        // Build the Blob
+        File resultFile = new File(outFilePath);
+        sliced = new FileBlob(resultFile);
+        sliced.setFilename(finalFileName);
+        sliced.setMimeType(blob.getMimeType());
+        Framework.trackFile(resultFile, sliced);
 
         return sliced;
     }
 
-    public BlobList slice(int inCount) {
+    public BlobList slice(int inCount) throws IOException, CommandNotAvailable {
 
         BlobList parts = new BlobList();
 
@@ -122,13 +153,13 @@ public class VideoSlicer extends BaseVideoTools {
         return parts.size() == 0 ? null : parts;
 
     }
-    
-    public void setConverter(String inConverter) {
-        converterName = inConverter;
+
+    public void setCommandLineName(String inCommandLineName) {
+        commandLineName = inCommandLineName;
     }
-    
-    public String getConverter() {
-        return converterName;
+
+    public String getCommandLineName() {
+        return commandLineName;
     }
 
 }

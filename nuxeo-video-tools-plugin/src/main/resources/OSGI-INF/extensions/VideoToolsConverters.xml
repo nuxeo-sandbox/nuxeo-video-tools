@@ -8,20 +8,6 @@
 	<extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl"
 		point="converter">
 
-		<converter name="videoSlicerByCopy"
-			class="org.nuxeo.video.tools.VideoSlicerCommandLineConverter">
-			<parameters>
-				<parameter name="CommandLineName">videoSlicerByCopy</parameter>
-			</parameters>
-		</converter>
-		
-		<converter name="videoSlicer"
-			class="org.nuxeo.video.tools.VideoSlicerCommandLineConverter">
-			<parameters>
-				<parameter name="CommandLineName">videoSlicer</parameter>
-			</parameters>
-		</converter>
-
 		<!-- New converters to be used by the VideoConverter class. They are formated 
 			as nuxeo default converters, which means they expect the width/height (width 
 			is calculated by BaseVideoConversionConverter -->
@@ -51,22 +37,6 @@
 	<extension
 		target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
 		point="command">
-
-        <!-- This one is very fast, but you may miss frames. Use it when you are sure you'll get the correct cut -->
-		<command name="videoSlicerByCopy" enabled="true">
-			<commandLine>ffmpeg</commandLine>
-			<parameterString>-y -i #{sourceFilePath} -ss #{start} -t #{duration} -c copy #{outFilePath}</parameterString>
-			<installationDirective>You need to install ffmpeg.
-			</installationDirective>
-		</command>
-		
-		<!-- This on is the basic slicing. It re-encodes the video, so it it is slower than videoSlicerCopy -->
-		<command name="videoSlicer" enabled="true">
-			<commandLine>ffmpeg</commandLine>
-			<parameterString>-y -i #{sourceFilePath} -ss #{start} -t #{duration} #{outFilePath}</parameterString>
-			<installationDirective>You need to install ffmpeg.
-			</installationDirective>
-		</command>
 
 	    <command name="convertToAVI" enabled="true">
 	      <commandLine>ffmpeg</commandLine>

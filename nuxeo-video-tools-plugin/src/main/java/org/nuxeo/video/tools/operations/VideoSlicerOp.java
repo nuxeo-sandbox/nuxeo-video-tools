@@ -17,12 +17,16 @@
 
 package org.nuxeo.video.tools.operations;
 
+import java.io.IOException;
+
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.video.tools.VideoSlicer;
 
 /**
@@ -39,19 +43,23 @@ public class VideoSlicerOp {
     @Param(name = "duration", required = false)
     protected String duration;
 
-    @Param(name = "converter", required = false, values = { "videoSlicer" })
-    protected String converter;
+    @Param(name = "commandLine", required = false, values = { "videoSlicer" })
+    protected String commandLine;
 
     @OperationMethod(collector = BlobCollector.class)
-    public Blob run(Blob inBlob) {
+    public Blob run(Blob inBlob) throws ClientException {
 
         Blob result = null;
 
         VideoSlicer slicer = new VideoSlicer(inBlob);
-        if(converter != null && !converter.isEmpty()) {
-            slicer.setConverter(converter);
+        if(commandLine != null && !commandLine.isEmpty()) {
+            slicer.setCommandLineName(commandLine);
         }
-        result = slicer.slice(start, duration);
+        try {
+            result = slicer.slice(start, duration);
+        } catch (IOException | CommandNotAvailable e) {
+            throw new ClientException(e);
+        }
 
         return result;
     }
