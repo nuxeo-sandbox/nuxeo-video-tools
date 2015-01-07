@@ -172,11 +172,9 @@ public class VideoToolsTest {
         dFinal = vi.getDuration();
         assertEquals(3.0, dFinal, 0.0);
         
-
         doLog(getCurrentMethodName(new RuntimeException()) + ": done");
     }
 
-    @Ignore
     @Test
     public void testSliceInParts() throws Exception {
 
@@ -184,16 +182,21 @@ public class VideoToolsTest {
         
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
         FileBlob fb1 = new FileBlob(f1);
+        double originalDuration = VideoHelper.getVideoInfo(fb1).getDuration();
         
         VideoSlicer vs = new VideoSlicer(fb1);
-        BlobList sliced = vs.slice(3);
+        BlobList sliced = vs.slice("3");
+        assertNotNull(sliced);
+        // The SuggestionWidget-0000-10.mp4 duration is 10 seconds => we should have 4 parts
+        assertEquals(4, sliced.size());
+        // Check the total duration is ok
+        double dFinal = 0;
         for(Blob b : sliced) {
-            File f = new File("/Users/thibaud/Desktop/TEST-TEMP-REMOVE/" + b.getFilename());
-           b.transferTo(f);
+            dFinal += VideoHelper.getVideoInfo(b).getDuration();
         }
+        assertEquals(originalDuration, dFinal, 0);
 
         doLog(getCurrentMethodName(new RuntimeException()) + ": done");
-        
         
     }
 

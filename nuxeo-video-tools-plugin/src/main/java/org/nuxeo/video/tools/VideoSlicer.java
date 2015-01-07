@@ -44,6 +44,8 @@ public class VideoSlicer extends BaseVideoTools {
 
     public static final String COMMAND_SLICER_BY_COPY = "videoSlicerByCopy";
 
+    public static final String COMMAND_SLICER_SEGMENTS = "videoSlicerSegments";
+
     protected DecimalFormat s_msFormat = new DecimalFormat("#.###");
 
     protected String commandLineName = COMMAND_SLICER_DEFAULT;
@@ -52,7 +54,8 @@ public class VideoSlicer extends BaseVideoTools {
         super(inBlob);
     }
 
-    public Blob slice(String inStart, String inDuration) throws IOException, CommandNotAvailable {
+    public Blob slice(String inStart, String inDuration) throws IOException,
+            CommandNotAvailable {
 
         Blob sliced = null;
 
@@ -79,10 +82,10 @@ public class VideoSlicer extends BaseVideoTools {
 
         params.addNamedParameter("start", inStart);
         params.addNamedParameter("duration", inDuration);
-        
+
         CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
         ExecResult clResult = cles.execCommand(commandLineName, params);
-        
+
         // Get the result, and first, handle errors.
         if (clResult.getError() != null) {
             throw new ClientException("Failed to execute the command <"
@@ -106,48 +109,74 @@ public class VideoSlicer extends BaseVideoTools {
         return sliced;
     }
 
-    public BlobList slice(int inCount) throws IOException, CommandNotAvailable {
+    /**
+     * Slices the video in n segments of inDuration each (with possible
+     * approximations)
+     * 
+     * @param inDuration
+     * @return
+     * @throws IOException
+     * @throws CommandNotAvailable
+     *
+     * @since 7.1
+     */
+    public BlobList slice(String inDuration) throws IOException,
+            CommandNotAvailable {
 
         BlobList parts = new BlobList();
 
-        if (inCount < 2) {
+        VideoInfo vi = VideoHelper.getVideoInfo(blob);
+
+        if (Double.valueOf(inDuration) >= vi.getDuration()) {
             parts.add(blob);
         } else {
 
-            VideoInfo vi = VideoHelper.getVideoInfo(blob);
+            String mimeType = blob.getMimeType();
+            CmdParameters params = new CmdParameters();
 
-            double start = 0.0;
-            double duration = vi.getDuration() / (double) inCount;
-            // ROund to 3 digits for milliseconds
-            duration = (double) Math.round(duration * 1000) / 1000;
-            String durationStr;// = s_msFormat.format(duration);
-            // realign the duration
-            // duration = Double.valueOf(durationStr);
-            double totalSlicedDuration = duration * (double) inCount;
-            while (totalSlicedDuration > vi.getDuration()) {
-                duration -= 0.001;
-                duration = (double) Math.round(duration * 1000) / 1000;
-                totalSlicedDuration = duration * (double) inCount;
-            }
-            durationStr = String.valueOf(duration);
+            File sourceFile = getBlobFile();
+            params.addNamedParameter("sourceFilePath",
+                    sourceFile.getAbsolutePath());
 
-            // First one
-            Blob oneSlice = this.slice("" + start, durationStr);
-            parts.add(oneSlice);
-            // Others
-            for (int i = 1; i < inCount; i++) {
-                start += duration;
-                if (i == (inCount - 1)) {
-                    double remaining = vi.getDuration() - totalSlicedDuration;
-                    if (remaining > 0) {
-                        duration += remaining + 0.05;
-                        duration = (double) Math.round(duration * 1000) / 1000;
-                        durationStr = String.valueOf(duration);
-                    }
-                }
-                oneSlice = this.slice("" + start, durationStr);
-                parts.add(oneSlice);
+            params.addNamedParameter("duration", inDuration);
+
+            File folder = new File(getTempDirectoryPath() + "/" + "Segments-"
+                    + java.util.UUID.randomUUID().toString().replace("-", ""));
+            folder.mkdir();
+            String outFilePattern = folder.getAbsolutePath()
+                    + "/"
+                    + VideoToolsUtilities.addSuffixToFileName(
+                            blob.getFilename(), "-%03d");
+            params.addNamedParameter("outFilePath", outFilePattern);
+
+            CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+            ExecResult clResult = cles.execCommand(COMMAND_SLICER_SEGMENTS, params);
+
+            // Get the result, and first, handle errors.
+            if (clResult.getError() != null) {
+                System.out.println("Failed to execute the command <"
+                        + COMMAND_SLICER_SEGMENTS + "> : "+ clResult.getError());
+                throw new ClientException("Failed to execute the command <"
+                        + COMMAND_SLICER_SEGMENTS + ">", clResult.getError());
             }
+
+            if (!clResult.isSuccessful()) {
+                throw new ClientException("Failed to execute the command <"
+                        + COMMAND_SLICER_SEGMENTS + ">. Final command [ "
+                        + clResult.getCommandLine() + " ] returned with error "
+                        + clResult.getReturnCode());
+            }
+
+            for (File oneFile : folder.listFiles()) {
+                FileBlob fb = new FileBlob(oneFile);
+
+                fb.setFilename(oneFile.getName());
+                fb.setMimeType(mimeType);
+                Framework.trackFile(oneFile, parts);
+
+                parts.add(fb);
+            }
+
         }
 
         return parts.size() == 0 ? null : parts;
