@@ -35,7 +35,9 @@ import org.junit.runner.RunWith;
 import org.nuxeo.video.tools.CCExtractor;
 import org.nuxeo.video.tools.VideoConcatDemuxer;
 import org.nuxeo.video.tools.VideoConverter;
+import org.nuxeo.video.tools.VideoSlicer;
 import org.nuxeo.common.utils.FileUtils;
+import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -95,6 +97,7 @@ public class VideoToolsTest {
         return new String(Files.readAllBytes(p));
     }
 
+    @Ignore
     @Test
     public void testExtractCC() throws Exception {
 
@@ -118,6 +121,7 @@ public class VideoToolsTest {
 
     }
 
+    @Ignore
     @Test
     public void testExtractCC_sliced() throws Exception {
 
@@ -140,7 +144,27 @@ public class VideoToolsTest {
         doLog(getCurrentMethodName(new RuntimeException()) + ": done");
 
     }
+    
+    @Test
+    public void testSliceInParts() throws Exception {
 
+        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        
+        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+        FileBlob fb1 = new FileBlob(f1);
+        
+        VideoSlicer vs = new VideoSlicer(fb1);
+        BlobList sliced = vs.slice(3);
+        for(Blob b : sliced) {
+            File f = new File("/Users/thibaud/Desktop/TEST-TEMP-REMOVE/" + b.getFilename());
+           b.transferTo(f);
+        }
+
+        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
+        
+    }
+
+    @Ignore
     @Test
     public void testConcatDemuxer() throws Exception {
 
@@ -183,6 +207,7 @@ public class VideoToolsTest {
 
     }
 
+    @Ignore
     @Test
     public void testConvert() throws Exception {
 

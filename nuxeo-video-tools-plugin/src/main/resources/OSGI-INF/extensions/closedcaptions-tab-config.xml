@@ -17,7 +17,7 @@
 			<category>VIEW_ACTION_LIST</category>
 			<filter id="canDisplayKeynotePreviewTab">
 				<rule grant="true">
-					<condition>#{currentDocument.videocc.content != null}</condition>
+					<condition>#{currentDocument.hasSchema("VideoClosedCaptions") &amp;&amp; currentDocument.videocc.content != null}</condition>
 				</rule>
 			</filter>
 		</action>

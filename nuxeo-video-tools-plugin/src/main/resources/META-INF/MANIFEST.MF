@@ -11,5 +11,6 @@ Nuxeo-Component: OSGI-INF/extensions/VideoToolsConverters.xml,OSGI-INF
  /extensions/VideoToolsCoreTypes.xml,OSGI-INF/extensions/VideoToolsWor
  ks.xml,OSGI-INF/extensions/VideoToolsListeners.xml,OSGI-INF/extension
  s/VideoToolsOperations.xml,OSGI-INF/extensions/VideoToolsCommandLines
- .xml,OSGI-INF/extensions/closedcaptions-tab-config.xml
+ .xml,OSGI-INF/extensions/closedcaptions-tab-config.xml,OSGI-INF/exten
+ sions/org.nuxeo.video.tools.operations.VideoSlicerInPartsOp.xml
 
