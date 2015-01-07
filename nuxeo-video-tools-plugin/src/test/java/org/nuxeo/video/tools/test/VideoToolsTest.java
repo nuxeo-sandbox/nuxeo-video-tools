@@ -97,7 +97,6 @@ public class VideoToolsTest {
         return new String(Files.readAllBytes(p));
     }
 
-    @Ignore
     @Test
     public void testExtractCC() throws Exception {
 
@@ -121,7 +120,6 @@ public class VideoToolsTest {
 
     }
 
-    @Ignore
     @Test
     public void testExtractCC_sliced() throws Exception {
 
@@ -199,7 +197,6 @@ public class VideoToolsTest {
         
     }
 
-    @Ignore
     @Test
     public void testConcatDemuxer() throws Exception {
 
@@ -242,7 +239,6 @@ public class VideoToolsTest {
 
     }
 
-    @Ignore
     @Test
     public void testConvert() throws Exception {
 
