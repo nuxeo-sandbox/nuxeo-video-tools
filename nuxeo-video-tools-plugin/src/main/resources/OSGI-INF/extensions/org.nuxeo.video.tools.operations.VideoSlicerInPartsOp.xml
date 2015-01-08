@@ -1,8 +1,0 @@
-<component name="org.nuxeo.video.tools.operations.VideoSlicerInPartsOp">
-
-  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
-    point="operations" >
-      <operation class="org.nuxeo.video.tools.operations.VideoSlicerInPartsOp" />
-   </extension>
-    
-</component>
