@@ -65,9 +65,6 @@ public class VideoToolsTest {
 
     protected static final String VIDEO_NAME = "files/VideoLan-Example.ts";
 
-    @Inject
-    CoreSession coreSession;
-
     protected void doLog(String what) {
         System.out.println(what);
     }
