@@ -10,12 +10,12 @@ It requests some tools to be installed on your server: See the ["Third Party Too
 
 ## Table of Contents
 * [Closed Captions](#closed-captions)
-* [Operations](#operation)
+* [Operations](#operations)
   * [`Video: Extract Closed Captions`](#video-extract-closed-captions)
-  * [`Video: Concat (ffmpeg demuxer)`](#Video: Concat (ffmpeg demuxer))
-  * [`Video.Convert`](#`Video.Convert`)
-  * [`Video.Slice`](#Video.Slice)
-  * [`Video.SliceInParts`](#Video.SliceInParts)
+  * [`Video: Concat (ffmpeg demuxer)`](#video-concat-ffmpeg-demuxer)
+  * [`Video: Convert`](#video-convert)
+  * [`Video: Slice`](#video-slice)
+  * [`Video: Slice in Parts`](#video-slice-in-parts)
   * [Import Operations in your Studio Project](#import-operations-in-your-studio-project)
 * [Build-Install](#build-install)
 * [Third Party Tools Used](#third-party-tools-used)
