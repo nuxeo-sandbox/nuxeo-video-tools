@@ -25,7 +25,13 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.video.tools.VideoConverter;
 import org.nuxeo.video.tools.VideoSlicer;
 
-@Operation(id = VideoConverterOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Convert", description = "Use either <code>height</code> <i>or</i> <code>scale</scale>. If both are > 0, the operation uses <code>height</code>")
+/**
+ * Uses a video converter (declared in an XML extension) to transcode the video
+ * using a new height. Use either <code>height</code> <i>or</i>
+ * <code>scale</scale>. If both are > 0, the operation uses <code>height</code>.
+ * If the height is <= 0, then the video is just transcoded (not resized).
+ */
+@Operation(id = VideoConverterOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Convert", description = "Uses a video converter (declared in an XML extension) to transcode the video using a new height. Use either <code>height</code> <i>or</i> <code>scale</scale>. If both are > 0, the operation uses <code>height</code>. If the height is <= 0, then the video is just transcoded (not resized).")
 public class VideoConverterOp {
 
     public static final String ID = "Video.Convert";

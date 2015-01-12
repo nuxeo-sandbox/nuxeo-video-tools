@@ -1,5 +1,5 @@
 /*
- * (C) Copyright ${year} Nuxeo SA (http://nuxeo.com/) and contributors.
+ * (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and contributors.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * Contributors:
- *     thibaud
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.video.tools.operations;
@@ -38,9 +38,11 @@ import org.nuxeo.ecm.platform.video.VideoInfo;
 import org.nuxeo.video.tools.VideoSlicer;
 
 /**
- * 
+ * Slices the video in n parts of <code>duration</code> each. USing ffmpeg
+ * -segment switch with few arguments: Each part will probably not be exactly
+ * <code>duration</code> long, this is normal behavior.
  */
-@Operation(id=VideoSlicerInPartsOp.ID, category=Constants.CAT_CONVERSION, label="Video: Slice in Parts", description="")
+@Operation(id = VideoSlicerInPartsOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Slice in Parts", description = "Slices the video in n parts of <code>duration</code> each. USing ffmpeg -segment switch with few arguments: Each part will probably not be exactly <code>duration</code> long, this is normal behavior.")
 public class VideoSlicerInPartsOp {
 
     public static final String ID = "Video.SliceInParts";
@@ -50,17 +52,17 @@ public class VideoSlicerInPartsOp {
 
     @OperationMethod
     public BlobList run(Blob inBlob) throws ClientException {
-        
+
         BlobList parts = null;
-        
+
         VideoSlicer vs = new VideoSlicer(inBlob);
         try {
             parts = vs.slice("" + duration);
         } catch (IOException | CommandNotAvailable e) {
             throw new ClientException(e);
         }
-      
-        return parts; 
-    }    
+
+        return parts;
+    }
 
 }

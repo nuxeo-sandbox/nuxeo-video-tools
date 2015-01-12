@@ -39,9 +39,12 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.video.tools.CCExtractor;
 
 /**
- * 
+ * Returns a Blob containing the closed captions using <code>ccextractor</code>
+ * (see its documentation about <code>outFormat</code>). If <code>startAt</code>
+ * /<code>endAt</code> are empty, the whole movie is handled. If the input is a
+ * document, you can use <code>xpath</code> (ignored if the input is a blob)
  */
-@Operation(id = ExtractClosedCaptionsOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Extract Closed Captions", description = "Return a Blob containng the closed captions using <code>ccextractor</code> (see its documentation about <code>outFormat</code>). Its <code>startAt</code>/<code>endAt</code> are empty, the whole movie is handled. If the input is a document, you can use <code>xpath</code> (ignored if the input is a blob)")
+@Operation(id = ExtractClosedCaptionsOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Extract Closed Captions", description = "Returns a Blob containing the closed captions using <code>ccextractor</code> (see its documentation about <code>outFormat</code>). If <code>startAt</code>/<code>endAt</code> are empty, the whole movie is handled. If the input is a document, you can use <code>xpath</code> (ignored if the input is a blob)")
 public class ExtractClosedCaptionsOp {
 
     public static final String ID = "Video.ExtractClosedCaptions";
@@ -54,7 +57,7 @@ public class ExtractClosedCaptionsOp {
 
     @Param(name = "endAt", required = false)
     protected String endAt;
-    
+
     @Param(name = "neverReturnNull", required = false, values = { "false" })
     protected boolean neverReturnNull;
 
@@ -62,7 +65,8 @@ public class ExtractClosedCaptionsOp {
     protected String xpath;
 
     @OperationMethod
-    public Blob run(DocumentModel inDoc) throws IOException, CommandNotAvailable {
+    public Blob run(DocumentModel inDoc) throws IOException,
+            CommandNotAvailable {
 
         return run((Blob) inDoc.getPropertyValue("file:content"));
 
@@ -75,8 +79,8 @@ public class ExtractClosedCaptionsOp {
 
         CCExtractor cce = new CCExtractor(inBlob, startAt, endAt);
         result = cce.extractCC(outFormat);
-        
-        if(result == null && neverReturnNull) {
+
+        if (result == null && neverReturnNull) {
             File tempFile = File.createTempFile("NxVT-", "txt");
             tempFile.deleteOnExit();
             Framework.trackFile(tempFile, this);
