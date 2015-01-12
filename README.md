@@ -75,7 +75,7 @@ When the input is a list of documents, the operation reads the video file in the
   * This parameter is optional. By default, the operation uses the name of the first video of the list and appends the "-concat" suffix before the file extension. So for example, if the name of the first video is "my video.mp4", the finale name will be "my video-concat.mp4"
 
 
-### `Video.Convert`
+### `Video: Convert`
 
 Uses an existing nuxeo `converter` to convert (transcode) the video, optionaly changing its size.
 
@@ -93,7 +93,7 @@ Some details:
 * If both `height` and `scale` are passed, only `height` is used
 * If `height` (or `scale`) is <=0, the height/width are not modified
 
-### `Video.Slice`
+### `Video: Slice`
 This operation receives a blob, cuts the video and outputs the result.
 
 #### Parameters
@@ -101,7 +101,7 @@ This operation receives a blob, cuts the video and outputs the result.
 * `duration`: The duration, formatted as `start`.
 * `commandLine`: The `commandLine` contribution to use to cut the video. The default value is `videoSlicer` (it is defined in the `VideoToolsCommandLines.xml` file), which re-encode the video. The other command line  declared by the plug-in is `videoSlicerByCopy`, which does (basically) a raw copy of the part to extract. It is very, very fast but can lead to black frames at the end or the beginning, or troubles for ffmpeg to slice for the expected duration, etc.
 
-### `Video.SliceInParts`
+### `Video: Slice in Parts`
 Receives a blob as input. Cuts the video and produces in n parts of about the same `duration`. "about the same" because we are using default values and ffmeg does its best to cuit each part at the correct duration, but depending on timestamps, frame-rates, still images, ... ffmpeg will decide to cut a bit before or a bit after the expected duration.)
 
 #### Parameters
