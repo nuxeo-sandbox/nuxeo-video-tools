@@ -19,6 +19,8 @@ package org.nuxeo.video.tools.operations;
 
 import java.io.IOException;
 
+import jdk.nashorn.internal.objects.NativeArray;
+
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -33,6 +35,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.video.tools.VideoConcatDemuxer;
 import org.nuxeo.video.tools.VideoSlicer;
@@ -78,8 +81,21 @@ public class VideoConcatDemuxerOp {
         }
 
         result = vc.concat(resultFileName);
-
+        
         return result;
+    }
+    
+    // To be called from Scripting Automation, with a JS array containing DocumentModels
+    @OperationMethod
+    public Blob run(NativeArray inDocs) throws ClientException, IOException, CommandNotAvailable {
+                
+        DocumentModelListImpl dml = new DocumentModelListImpl();
+        for(int i = 0; i < inDocs.size(); ++i) {
+            dml.add((DocumentModel) inDocs.get(i));
+        }
+        
+        
+        return run(dml);
     }
 
 }
