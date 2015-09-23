@@ -18,13 +18,8 @@
 package org.nuxeo.video.tools;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.platform.picture.api.BlobHelper;
-import org.nuxeo.runtime.api.Framework;
 
 /**
  * Umbrella class with basic utilities
@@ -41,20 +36,6 @@ public abstract class BaseVideoTools {
     
     public BaseVideoTools(Blob inBlob) {
         blob = inBlob;
-    }
-
-    /**
-     * Return the java File holding the blob. If the blob was not backed-up by a
-     * File, create a temporary one
-     * 
-     * @return the java File holding the blob
-     * @throws IOException
-     *
-     * @since 7.1
-     */
-    public File getBlobFile() throws IOException {
-        
-        return VideoToolsUtilities.getBlobFile(blob);
     }
     
     public String getTempDirectoryPath() {

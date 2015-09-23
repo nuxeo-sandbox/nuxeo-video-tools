@@ -16,13 +16,6 @@
  */
 package org.nuxeo.video.tools;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.platform.picture.api.BlobHelper;
-import org.nuxeo.runtime.api.Framework;
-
 /**
  * Misc. utility methods
  * 
@@ -30,36 +23,6 @@ import org.nuxeo.runtime.api.Framework;
  * @since 7.1
  */
 public class VideoToolsUtilities {
-
-    /**
-     * Return the java File holding the blob. If the blob was not backed-up by a
-     * File, create a temporary one
-     * 
-     * @return the java File holding the blob
-     * @throws IOException
-     *
-     * @since 7.1
-     */
-    public static File getBlobFile(Blob inBlob) throws IOException {
-
-        File f = null;
-
-        try {
-            f = BlobHelper.getFileFromBlob(inBlob);
-        } finally {
-            // Nothing
-        }
-
-        if (f == null) {
-
-            File tempFile = File.createTempFile("NxVTu-", "");
-            inBlob.transferTo(tempFile);
-            tempFile.deleteOnExit();
-            Framework.trackFile(tempFile, inBlob);
-        }
-
-        return f;
-    }
     
     /**
      * Build a filename, inserting the suffix between the file extension.

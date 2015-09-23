@@ -18,18 +18,15 @@ package org.nuxeo.video.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.ClientException;
-import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
-import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
+import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
@@ -54,8 +51,7 @@ public class VideoSlicer extends BaseVideoTools {
         super(inBlob);
     }
 
-    public Blob slice(String inStart, String inDuration) throws IOException,
-            CommandNotAvailable {
+    public Blob slice(String inStart, String inDuration) throws IOException, CommandNotAvailable {
 
         Blob sliced = null;
 
@@ -63,65 +59,61 @@ public class VideoSlicer extends BaseVideoTools {
             return null;
         }
 
-        CmdParameters params = new CmdParameters();
-
         // Get the final name, adding start/duration to the original name
-        String finalFileName = VideoToolsUtilities.addSuffixToFileName(
-                blob.getFilename(), "-" + inStart.replaceAll(":", "") + "-"
-                        + inDuration.replaceAll(":", ""));
+        String finalFileName = VideoToolsUtilities.addSuffixToFileName(blob.getFilename(),
+                "-" + inStart.replaceAll(":", "") + "-" + inDuration.replaceAll(":", ""));
 
-        // The source video
-        File sourceFile = getBlobFile();
-        params.addNamedParameter("sourceFilePath", sourceFile.getAbsolutePath());
+        CloseableFile sourceBlobFile = null;
+        try {
+            sourceBlobFile = blob.getCloseableFile();
 
-        // The temp destination file
-        String outFilePath = getTempDirectoryPath() + "/" + "VS-"
-                + java.util.UUID.randomUUID().toString().replace("-", "") + "-"
-                + finalFileName;
-        params.addNamedParameter("outFilePath", outFilePath);
+            CmdParameters params = new CmdParameters();
+            params.addNamedParameter("sourceFilePath", sourceBlobFile.getFile().getAbsolutePath());
 
-        params.addNamedParameter("start", inStart);
-        params.addNamedParameter("duration", inDuration);
+            params.addNamedParameter("start", inStart);
+            params.addNamedParameter("duration", inDuration);
 
-        CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
-        ExecResult clResult = cles.execCommand(commandLineName, params);
+            String ext = FileUtils.getFileExtension(finalFileName);
+            sliced = Blobs.createBlobWithExtension("." + ext);
+            params.addNamedParameter("outFilePath", sliced.getFile().getAbsolutePath());
 
-        // Get the result, and first, handle errors.
-        if (clResult.getError() != null) {
-            throw new ClientException("Failed to execute the command <"
-                    + commandLineName + ">", clResult.getError());
+            CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+            ExecResult clResult = cles.execCommand(commandLineName, params);
+
+            // Get the result, and first, handle errors.
+            if (clResult.getError() != null) {
+                throw new ClientException("Failed to execute the command <" + commandLineName + ">",
+                        clResult.getError());
+            }
+
+            if (!clResult.isSuccessful()) {
+                throw new ClientException("Failed to execute the command <" + commandLineName + ">. Final command [ "
+                        + clResult.getCommandLine() + " ] returned with error " + clResult.getReturnCode());
+            }
+
+            // Build the Blob
+            sliced.setFilename(finalFileName);
+            sliced.setMimeType(blob.getMimeType());
+
+        } finally {
+            if (sourceBlobFile != null) {
+                sourceBlobFile.close();
+            }
         }
-
-        if (!clResult.isSuccessful()) {
-            throw new ClientException("Failed to execute the command <"
-                    + commandLineName + ">. Final command [ "
-                    + clResult.getCommandLine() + " ] returned with error "
-                    + clResult.getReturnCode());
-        }
-
-        // Build the Blob
-        File resultFile = new File(outFilePath);
-        sliced = new FileBlob(resultFile);
-        sliced.setFilename(finalFileName);
-        sliced.setMimeType(blob.getMimeType());
-        Framework.trackFile(resultFile, sliced);
 
         return sliced;
     }
 
     /**
-     * Slices the video in n segments of inDuration each (with possible
-     * approximations)
+     * Slices the video in n segments of inDuration each (with possible approximations)
      * 
      * @param inDuration
      * @return
      * @throws IOException
      * @throws CommandNotAvailable
-     *
      * @since 7.1
      */
-    public BlobList slice(String inDuration) throws IOException,
-            CommandNotAvailable {
+    public BlobList slice(String inDuration) throws IOException, CommandNotAvailable {
 
         BlobList parts = new BlobList();
 
@@ -130,51 +122,55 @@ public class VideoSlicer extends BaseVideoTools {
         if (Double.valueOf(inDuration) >= vi.getDuration()) {
             parts.add(blob);
         } else {
-
             String mimeType = blob.getMimeType();
-            CmdParameters params = new CmdParameters();
+            CloseableFile sourceBlobFile = null;
+            try {
+                sourceBlobFile = blob.getCloseableFile();
 
-            File sourceFile = getBlobFile();
-            params.addNamedParameter("sourceFilePath",
-                    sourceFile.getAbsolutePath());
+                CmdParameters params = new CmdParameters();
 
-            params.addNamedParameter("duration", inDuration);
+                params.addNamedParameter("sourceFilePath", sourceBlobFile.getFile().getAbsolutePath());
 
-            File folder = new File(getTempDirectoryPath() + "/" + "Segments-"
-                    + java.util.UUID.randomUUID().toString().replace("-", ""));
-            folder.mkdir();
-            String outFilePattern = folder.getAbsolutePath()
-                    + "/"
-                    + VideoToolsUtilities.addSuffixToFileName(
-                            blob.getFilename(), "-%03d");
-            params.addNamedParameter("outFilePath", outFilePattern);
+                params.addNamedParameter("duration", inDuration);
 
-            CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
-            ExecResult clResult = cles.execCommand(COMMAND_SLICER_SEGMENTS, params);
+                File folder = new File(getTempDirectoryPath() + "/" + "Segments-"
+                        + java.util.UUID.randomUUID().toString().replace("-", ""));
+                folder.mkdir();
+                String outFilePattern = folder.getAbsolutePath() + "/"
+                        + VideoToolsUtilities.addSuffixToFileName(blob.getFilename(), "-%03d");
+                params.addNamedParameter("outFilePath", outFilePattern);
 
-            // Get the result, and first, handle errors.
-            if (clResult.getError() != null) {
-                System.out.println("Failed to execute the command <"
-                        + COMMAND_SLICER_SEGMENTS + "> : "+ clResult.getError());
-                throw new ClientException("Failed to execute the command <"
-                        + COMMAND_SLICER_SEGMENTS + ">", clResult.getError());
-            }
+                CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+                ExecResult clResult = cles.execCommand(COMMAND_SLICER_SEGMENTS, params);
 
-            if (!clResult.isSuccessful()) {
-                throw new ClientException("Failed to execute the command <"
-                        + COMMAND_SLICER_SEGMENTS + ">. Final command [ "
-                        + clResult.getCommandLine() + " ] returned with error "
-                        + clResult.getReturnCode());
-            }
+                // Get the result, and first, handle errors.
+                if (clResult.getError() != null) {
+                    System.out.println("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS + "> : "
+                            + clResult.getError());
+                    throw new ClientException("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS + ">",
+                            clResult.getError());
+                }
 
-            for (File oneFile : folder.listFiles()) {
-                FileBlob fb = new FileBlob(oneFile);
+                if (!clResult.isSuccessful()) {
+                    throw new ClientException("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS
+                            + ">. Final command [ " + clResult.getCommandLine() + " ] returned with error "
+                            + clResult.getReturnCode());
+                }
 
-                fb.setFilename(oneFile.getName());
-                fb.setMimeType(mimeType);
-                Framework.trackFile(oneFile, parts);
+                for (File oneFile : folder.listFiles()) {
+                    FileBlob fb = new FileBlob(oneFile);
 
-                parts.add(fb);
+                    fb.setFilename(oneFile.getName());
+                    fb.setMimeType(mimeType);
+                    Framework.trackFile(oneFile, parts);
+
+                    parts.add(fb);
+                }
+
+            } finally {
+                if (sourceBlobFile != null) {
+                    sourceBlobFile.close();
+                }
             }
 
         }

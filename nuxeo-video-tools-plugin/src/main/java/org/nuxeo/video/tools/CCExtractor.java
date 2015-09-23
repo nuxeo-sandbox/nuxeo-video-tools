@@ -18,12 +18,9 @@ package org.nuxeo.video.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,15 +29,10 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CloseableFile;
-import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
-import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
-import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
-import org.nuxeo.ecm.platform.picture.api.BlobHelper;
 import org.nuxeo.runtime.api.Framework;
 
 /**
@@ -54,6 +46,7 @@ import org.nuxeo.runtime.api.Framework;
  */
 public class CCExtractor extends BaseVideoTools {
 
+    @SuppressWarnings("unused")
     private static final Log log = LogFactory.getLog(CCExtractor.class);
 
     public static final String COMMAND_FULL_VIDEO = "videoClosedCaptionsExtractor";
