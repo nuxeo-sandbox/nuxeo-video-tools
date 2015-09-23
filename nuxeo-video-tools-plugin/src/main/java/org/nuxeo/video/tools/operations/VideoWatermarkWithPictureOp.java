@@ -18,6 +18,7 @@ package org.nuxeo.video.tools.operations;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -37,7 +38,7 @@ import org.nuxeo.video.tools.VideoWatermarker;
  * <code>scale</scale>. If both are > 0, the operation uses <code>height</code>.
  * If the height is <= 0, then the video is just transcoded (not resized).
  */
-@Operation(id = VideoWatermarkWithPictureOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Watermark with Picture", description = "")
+@Operation(id = VideoWatermarkWithPictureOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Watermark with Picture", description = "Watermark the video with the picture stored in file:content of pictureDoc. x-y: Position of the left-top corner of the picture.")
 public class VideoWatermarkWithPictureOp {
 
     public static final String ID = "Video.WatermarkWithPicture";
@@ -54,7 +55,7 @@ public class VideoWatermarkWithPictureOp {
     @Param(name = "resultFileName", required = false)
     protected String resultFileName;
 
-    @OperationMethod(collector = BlobCollector.class)
+    @OperationMethod
     public Blob run(Blob inBlob) throws ClientException, IOException, CommandNotAvailable {
 
         Blob result = null;
@@ -62,7 +63,12 @@ public class VideoWatermarkWithPictureOp {
         VideoWatermarker vw = new VideoWatermarker(inBlob);
         
         Blob picture = (Blob) pictureDoc.getPropertyValue("file:content");
-        
+        if(StringUtils.isBlank(x)) {
+            x = "0";
+        }
+        if(StringUtils.isBlank(y)) {
+            y = "0";
+        }
         result = vw.watermarkWithPicture(resultFileName, picture, x, y);
 
         return result;

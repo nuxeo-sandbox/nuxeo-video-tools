@@ -35,7 +35,7 @@ public abstract class BaseVideoTools {
 
     protected Blob blob;
     
-    private static final File VIDEOTOOLS_TEMP_DIR = new File(System.getProperty("java.io.tmpdir") + "NuxeoVideoTools");
+    private static final File VIDEOTOOLS_TEMP_DIR = new File(System.getProperty("java.io.tmpdir") + "/NuxeoVideoTools");
     
     private static String VIDEOTOOLS_TEMP_DIR_PATH;
     

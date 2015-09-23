@@ -20,9 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
@@ -42,17 +45,16 @@ public class VideoWatermarker extends BaseVideoTools {
     }
 
     /* The command line is:
-     * ffmpeg -y -i #{sourceFilePath}  #{pictureFilePath} -filter_complex "overlay:#{pos_x}:#{pos_y}" #{outFilePath}
+     * ffmpeg -y -i #{sourceFilePath} -i #{pictureFilePath} -filter_complex #{filterComplex} #{outFilePath}
+     * 
+     * filterComplex will be replaced with "overlay=10:10" (with 10:10 s an example)
      * 
      */
     public Blob watermarkWithPicture(String inFinalFileName, Blob inWatermark, String x, String y) throws IOException,
             CommandNotAvailable, ClientException {
 
-        FileBlob result = null;
+        Blob result = null;
         String originalMimeType;
-        
-        String imgPath = inWatermark.getFile().getAbsolutePath();
-
         originalMimeType = blob.getMimeType();
 
         // Prepare parameters
@@ -60,45 +62,52 @@ public class VideoWatermarker extends BaseVideoTools {
             inFinalFileName = VideoToolsUtilities.addSuffixToFileName(
                     blob.getFilename(), "-WM");
         }
-
-        // Run the command line
-        CmdParameters params = new CmdParameters();
+        String overlay = "overlay=" + x + ":" + y;
         
-        File sourceFile = getBlobFile();
-        params.addNamedParameter("sourceFilePath", sourceFile.getAbsolutePath());
-        
-        params.addNamedParameter("pictureFilePath", imgPath);
-        params.addNamedParameter("pos_x", x);
-        params.addNamedParameter("pos_y", y);
-        
-        // The temp destination file
-        String outFilePath = getTempDirectoryPath() + "/" + "VW-"
-                + java.util.UUID.randomUUID().toString().replace("-", "") + "-"
-                + inFinalFileName;
-        params.addNamedParameter("outFilePath", outFilePath);
+        CloseableFile sourceBlobFile = null, pictBlobFile = null;
+        try {
+            sourceBlobFile = blob.getCloseableFile();
+            pictBlobFile = inWatermark.getCloseableFile();
 
-        CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
-        ExecResult clResult = cles.execCommand(COMMAND_WATERMARK_WITH_PICTURE,
-                params);
+            // Prepare command line parameters
+            CmdParameters params = new CmdParameters();
+            params.addNamedParameter("sourceFilePath", sourceBlobFile.getFile().getAbsolutePath());
+            params.addNamedParameter("pictureFilePath", pictBlobFile.getFile().getAbsolutePath());
+            params.addNamedParameter("filterComplex", overlay);
+            
+            String ext = FileUtils.getFileExtension(inFinalFileName);
+            result = Blobs.createBlobWithExtension("." + ext);
+            params.addNamedParameter("outFilePath", result.getFile().getAbsolutePath());
 
-        // Get the result, and first, handle errors.
-        if (clResult.getError() != null) {
-            throw new ClientException("Failed to execute the command <"
-                    + COMMAND_WATERMARK_WITH_PICTURE + ">", clResult.getError());
+            // Run and get results
+            CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+            ExecResult clResult = cles.execCommand(COMMAND_WATERMARK_WITH_PICTURE,
+                    params);
+            
+            if (clResult.getError() != null) {
+                throw new ClientException("Failed to execute the command <"
+                        + COMMAND_WATERMARK_WITH_PICTURE + ">", clResult.getError());
+            }
+            if (!clResult.isSuccessful()) {
+                throw new ClientException("Failed to execute the command <"
+                        + COMMAND_WATERMARK_WITH_PICTURE + ">. Final command [ "
+                        + clResult.getCommandLine() + " ] returned with error "
+                        + clResult.getReturnCode());
+            }
+            
+            // Build the final blob
+            result.setFilename(inFinalFileName);
+            result.setMimeType(originalMimeType);
+            
+            
+        } finally {
+            if (sourceBlobFile != null) {
+                sourceBlobFile.close();
+            }
+            if (pictBlobFile != null) {
+                pictBlobFile.close();
+            }
         }
-
-        if (!clResult.isSuccessful()) {
-            throw new ClientException("Failed to execute the command <"
-                    + COMMAND_WATERMARK_WITH_PICTURE + ">. Final command [ "
-                    + clResult.getCommandLine() + " ] returned with error "
-                    + clResult.getReturnCode());
-        }
-
-        // Build the Blob
-        File resultFile = new File(outFilePath);
-        result = new FileBlob(resultFile);
-        result.setFilename(inFinalFileName);
-        result.setMimeType(originalMimeType);
 
         return result;
     }
