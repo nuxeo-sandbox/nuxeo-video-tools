@@ -1,5 +1,5 @@
 <!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
-<package type="addon" name="nuxeo-video-tools-marketplace"
+<package type="addon" name="nuxeo-video-tools"
   version="@VERSION@">
   <!-- Give a useful title -->
   <title>Nuxeo Video Tools</title>
@@ -7,7 +7,7 @@
     <p>Misc. Tools to Handle Video Files</p>
   </description>
   <!-- your hime page (optionnal) -->
-  <home-page>http://nuxeo.com</home-page>
+  <home-page>https://github.com/nuxeo-sandbox/nuxeo-video-tools</home-page>
   <vendor>Nuxeo</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
@@ -26,6 +26,7 @@
     <platform>cap-@VERSION@</platform>
     <platform>cap-6.0</platform>
     <platform>cap-7.3</platform>
+    <platform>cap-7.4</platform>
   </platforms>
   <!-- Dependencies on other packages -->
   <!-- <dependencies> -->

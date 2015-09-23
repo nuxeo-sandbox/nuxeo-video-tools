@@ -12,7 +12,7 @@
   <artifactId>nuxeo-video-tools-mp</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>zip</packaging>
-  <name>Marketplace package - Binary Metadata Utils</name>
+  <name>Marketplace package - Video Tools</name>
 
   <dependencies>
     <dependency>
