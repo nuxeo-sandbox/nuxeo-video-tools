@@ -29,7 +29,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
@@ -95,10 +97,12 @@ public class CCExtractor extends BaseVideoTools {
             return null;
         }
 
-        CmdParameters params = new CmdParameters();
-
-        File sourceFile = getBlobFile();
-        params.addNamedParameter("sourceFilePath", sourceFile.getAbsolutePath());
+        CloseableFile sourceBlobFile = null;
+        try {
+        CmdParameters params = new CmdParameters();        
+        
+        sourceBlobFile = blob.getCloseableFile();
+        params.addNamedParameter("sourceFilePath", sourceBlobFile.getFile().getAbsolutePath());
 
         if (StringUtils.isBlank(theOutFormat)) {
             theOutFormat = DEFAULT_OUTFORMAT;
@@ -111,18 +115,9 @@ public class CCExtractor extends BaseVideoTools {
             params.addNamedParameter("startAt", startAt);
             params.addNamedParameter("endAt", endAt);
         }
-
-        String baseDir = System.getProperty("java.io.tmpdir");
-        String fileName = blob.getFilename();
-        int pos = fileName.lastIndexOf('.');
-        if (pos > -1) {
-            fileName = fileName.substring(0, pos);
-        }
-
-        String outFilePath = baseDir + "CCE-"
-                + java.util.UUID.randomUUID().toString().replace("-", "") + "-"
-                + fileName + "." + theOutFormat;
-        params.addNamedParameter("outFilePath", outFilePath);
+        
+        blobCC = Blobs.createBlobWithExtension("." + theOutFormat);
+        params.addNamedParameter("outFilePath", blobCC.getFile().getAbsolutePath());
 
         CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
         ExecResult clResult = cles.execCommand(commandLineName, params);
@@ -139,27 +134,27 @@ public class CCExtractor extends BaseVideoTools {
                     + clResult.getCommandLine() + " ] returned with error "
                     + clResult.getReturnCode());
         }
-
-        // Build the Blob
-        File resultFile = new File(outFilePath);
+        
         // ccextractor always create a file, even if there is no captions.
         // We must check if the file is empty or not, while handling BOMs of
         // Unicode files.
         // Let's say that less than 5 bytes, we don't have a caption.
-        if (resultFile.exists()) {
+        File resultFile = blobCC.getFile();
+        if(resultFile.exists()) {
             if (resultFile.length() > 5) {
-                blobCC = new FileBlob(resultFile);
                 blobCC.setFilename(blob.getFilename() + "." + theOutFormat);
                 if (isTextOutFormat(theOutFormat)) {
                     blobCC.setMimeType("text/plain");
                 }
-                Framework.trackFile(resultFile, blobCC);
-            } else {
-                Framework.trackFile(resultFile, this);
             }
-            resultFile.deleteOnExit();
         }
-
+        
+        } finally {
+            if(sourceBlobFile != null) {
+                sourceBlobFile.close();
+            }
+        }
+        
         return blobCC;
     }
 
