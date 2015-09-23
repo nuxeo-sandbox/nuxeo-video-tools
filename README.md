@@ -1,12 +1,12 @@
 nuxeo-video-tools
 ===========================
 
-This plug-in adds tools for handling videos: Slice, Merge, Extract ClosedCaptions
+This plug-in adds tools for handling videos: Slice, Merge, Extract ClosedCaptions, ...
 
 ## About - Requirements
 `nuxeo-video-tools` is a plug-in for the [nuxeo platform](http://www.nuxeo.com). It adds tools, operations, automation for handling videos: Slice, Merge, Extract ClosedCaptions...
 
-It requests some tools to be installed on your server: See the ["Third Party Tools Used" sections](#third-party-tools-used) 
+Depending on the tool you are using, it may be rrequired to install some tools on your server: See the ["Third Party Tools Used" sections](#third-party-tools-used) 
 
 ## Table of Contents
 * [Closed Captions](#closed-captions)
@@ -16,6 +16,7 @@ It requests some tools to be installed on your server: See the ["Third Party Too
   * [`Video: Convert`](#video-convert)
   * [`Video: Slice`](#video-slice)
   * [`Video: Slice in Parts`](#video-slice-in-parts)
+  * [`Video: Watermark with picture`](#video-watermark-with-picture)
   * [Import Operations in your Studio Project](#import-operations-in-your-studio-project)
 * [Build-Install](#build-install)
 * [Third Party Tools Used](#third-party-tools-used)
@@ -106,6 +107,19 @@ Receives a blob as input. Cuts the video and produces in n parts of about the sa
 
 #### Parameters
 * `duration`: the duration, in seconds, of each part.
+
+### `video-watermark-with-picture`
+Receives a blob (video) as input. Produces a blob watermarked with the given picture, at the given position.
+
+#### Parameters
+* `pictureDoc`: The id or the path of a document whose `file:content` field contains a the picture to use for the watermarking
+* `x` and `y`:
+  * The position from left and top of the video to start drawing the image (the top-left corner of the image will be positionned at y-x)
+  * Default value for each: 0
+* `resultFileName`:
+  * The name of the resulting watermarked video.
+  * **WARNING**: Do not change the video format vy passing another extension
+  * Default value: original-file-name-WM.originalExtebnsion (so, for a video "myVideo.mp4", the final name will be "myVideo-WM.mp4")
 
 
 ### Import Operations in your Studio Project
