@@ -41,12 +41,10 @@ import org.nuxeo.video.tools.VideoConcatDemuxer;
 import org.nuxeo.video.tools.VideoSlicer;
 
 /**
- * Merge 2-n videos in one using ffmpeg demuxer. Please, see to ffmpeg
- * documentation about efficiency, timestamps, ... For example, mixing formats,
- * sizes, frame rates ... will not create a nice final video. If
- * <code>resultFileName</code> is not used, the operation uses the first file
- * and adds "-concat" (then the file extension)
- * 
+ * Merge 2-n videos in one using ffmpeg demuxer. Please, see to ffmpeg documentation about efficiency, timestamps, ...
+ * For example, mixing formats, sizes, frame rates ... will not create a nice final video. If
+ * <code>resultFileName</code> is not used, the operation uses the first file and adds "-concat" (then the file
+ * extension)
  */
 @Operation(id = VideoConcatDemuxerOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Concat (ffmpeg demuxer)", description = "Merge 2-n videos in one using ffmpeg demuxer. Please, see to ffmpeg documentation about efficiency, timestamps, ... For example, mixing formats, sizes, frame rates ... will not create a nice final video. f <code>resultFileName</code> is not used, the operation uses the first file and adds -concat (then the file extension)")
 public class VideoConcatDemuxerOp {
@@ -57,8 +55,7 @@ public class VideoConcatDemuxerOp {
     protected String resultFileName;
 
     @OperationMethod
-    public Blob run(BlobList inBlobs) throws ClientException, IOException,
-            CommandNotAvailable {
+    public Blob run(BlobList inBlobs) throws ClientException, IOException, CommandNotAvailable {
 
         Blob result = null;
 
@@ -70,8 +67,7 @@ public class VideoConcatDemuxerOp {
     }
 
     @OperationMethod
-    public Blob run(DocumentModelList inDocs) throws ClientException,
-            IOException, CommandNotAvailable {
+    public Blob run(DocumentModelList inDocs) throws ClientException, IOException, CommandNotAvailable {
 
         Blob result = null;
 
@@ -81,20 +77,21 @@ public class VideoConcatDemuxerOp {
         }
 
         result = vc.concat(resultFileName);
-        
+
         return result;
     }
-    
+
     // To be called from Scripting Automation, with a JS array containing DocumentModels
+    // This is kind of a workaround, waiting for 7.4 or higher to correctly convert
+    // JS arrays.
     @OperationMethod
     public Blob run(NativeArray inDocs) throws ClientException, IOException, CommandNotAvailable {
-                
+
         DocumentModelListImpl dml = new DocumentModelListImpl();
-        for(int i = 0; i < inDocs.size(); ++i) {
+        for (int i = 0; i < inDocs.size(); ++i) {
             dml.add((DocumentModel) inDocs.get(i));
         }
-        
-        
+
         return run(dml);
     }
 
