@@ -33,10 +33,8 @@ import org.nuxeo.video.tools.VideoSlicer;
 import org.nuxeo.video.tools.VideoWatermarker;
 
 /**
- * Uses a video converter (declared in an XML extension) to transcode the video
- * using a new height. Use either <code>height</code> <i>or</i>
- * <code>scale</scale>. If both are > 0, the operation uses <code>height</code>.
- * If the height is <= 0, then the video is just transcoded (not resized).
+ * Watermark a Video with the given Picture, at the given position.
+ * 
  */
 @Operation(id = VideoWatermarkWithPictureOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Watermark with Picture", description = "Watermark the video with the picture stored in file:content of pictureDoc. x-y: Position of the left-top corner of the picture.")
 public class VideoWatermarkWithPictureOp {
