@@ -7,6 +7,7 @@
       <operation class="org.nuxeo.video.tools.operations.VideoConcatDemuxerOp" />
       <operation class="org.nuxeo.video.tools.operations.VideoConverterOp" />
       <operation class="org.nuxeo.video.tools.operations.VideoSlicerInPartsOp" />
+      <operation class="org.nuxeo.video.tools.operations.VideoWatermarkWithPictureOp" />
    </extension>
     
 </component>

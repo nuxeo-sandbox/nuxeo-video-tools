@@ -57,6 +57,13 @@
 			<installationDirective>You need to install ffmpeg.
 			</installationDirective>
 		</command>
+		
+		<command name="videoWatermarkWithPicture" enabled="true">
+			<commandLine>ffmpeg</commandLine>
+			<parameterString>-y -i #{sourceFilePath} -i #{pictureFilePath} -filter_complex "overlay:#{pos_x}:#{pos_y}" #{outFilePath}</parameterString>
+			<installationDirective>You need to install ffmpeg.
+			</installationDirective>
+		</command>
 
 	</extension>
 

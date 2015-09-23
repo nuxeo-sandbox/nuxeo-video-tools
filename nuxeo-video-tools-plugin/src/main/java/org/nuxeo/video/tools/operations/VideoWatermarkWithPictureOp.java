@@ -16,14 +16,20 @@
  */
 package org.nuxeo.video.tools.operations;
 
+import java.io.IOException;
+
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.video.tools.VideoConverter;
 import org.nuxeo.video.tools.VideoSlicer;
+import org.nuxeo.video.tools.VideoWatermarker;
 
 /**
  * Uses a video converter (declared in an XML extension) to transcode the video
@@ -31,32 +37,33 @@ import org.nuxeo.video.tools.VideoSlicer;
  * <code>scale</scale>. If both are > 0, the operation uses <code>height</code>.
  * If the height is <= 0, then the video is just transcoded (not resized).
  */
-@Operation(id = VideoConverterOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Convert", description = "Uses a video converter (declared in an XML extension) to transcode the video using a new height. Use either <code>height</code> <i>or</i> <code>scale</scale>. If both are > 0, the operation uses <code>height</code>. If the height is <= 0, then the video is just transcoded (not resized).")
-public class VideoConverterOp {
+@Operation(id = VideoWatermarkWithPictureOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Watermark with Picture", description = "")
+public class VideoWatermarkWithPictureOp {
 
-    public static final String ID = "Video.Convert";
+    public static final String ID = "Video.WatermarkWithPicture";
 
-    @Param(name = "height", required = false)
-    protected long height;
+    @Param(name = "pictureDoc", required = true)
+    protected DocumentModel pictureDoc;
 
-    @Param(name = "scale", required = false)
-    protected String scale;
+    @Param(name = "x", required = false)
+    protected String x;
 
-    @Param(name = "converter", required = false)
-    protected String converter;
+    @Param(name = "y", required = false)
+    protected String y;
+
+    @Param(name = "resultFileName", required = false)
+    protected String resultFileName;
 
     @OperationMethod(collector = BlobCollector.class)
-    public Blob run(Blob inBlob) {
+    public Blob run(Blob inBlob) throws ClientException, IOException, CommandNotAvailable {
 
         Blob result = null;
 
-        VideoConverter vc = new VideoConverter(inBlob);
-        if (height > 0) {
-            result = vc.convert(height, converter);
-        } else {
-            
-            result = vc.convert(Double.parseDouble(scale), converter);
-        }
+        VideoWatermarker vw = new VideoWatermarker(inBlob);
+        
+        Blob picture = (Blob) pictureDoc.getPropertyValue("file:content");
+        
+        result = vw.watermarkWithPicture(resultFileName, picture, x, y);
 
         return result;
     }
