@@ -141,7 +141,7 @@ Assuming [`maven`](http://maven.apache.org) (min. 3.2.1) is installed on your co
 ```
 # Clone the GitHub repository
 cd /path/to/where/you/want/to/clone/this/repository
-git clone https://github.com/ThibArg/nuxeo-viedo-tools
+git clone https://github.com/nuxeo-sandbox/nuxeo-video-tools
 # Compile
 cd nuxeo-video-tools
 mvn clean install
