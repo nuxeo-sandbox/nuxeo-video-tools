@@ -28,7 +28,7 @@
                    width="640"
                    height="480"
                    controls="controls"
-                   preload="auto"
+                   preload="metadata"
                    poster="#{videoActions.getURLForStaticPreview(currentDocument)}">
                 <source src="#{videoActions.getTranscodedVideoURL(currentDocument, 'WebM 480p')}" type='video/webm'/>
             </video>
@@ -36,7 +36,7 @@
 
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                initVideoJs(document.getElementsByName('video_1')[0]);
+                initVideoJs(document.getElementsByName('video_1')[0],"#{action.properties.sliderOn}");
             });
         </script>
 
