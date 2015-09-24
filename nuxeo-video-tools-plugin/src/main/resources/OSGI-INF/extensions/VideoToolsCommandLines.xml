@@ -50,7 +50,7 @@
 		</command>
 		
 		<!-- Slices in n segment of #duration each. outFilePath is an expression
-		     (OUT%03d.mp4 for exampmle) so ffmpeg creates one file/segment -->
+		     (OUT%03d.mp4 for example) so ffmpeg creates one file/segment -->
 		<command name="videoSlicerSegments" enabled="true">
 			<commandLine>ffmpeg</commandLine>
 			<parameterString>-y -i #{sourceFilePath}  -c copy -f segment -segment_time #{duration} -reset_timestamps 1 #{outFilePath}</parameterString>
@@ -58,6 +58,7 @@
 			</installationDirective>
 		</command>
 		
+		<!-- filterComplex is the full filter. For example: "overlay=10:10" -->
 		<command name="videoWatermarkWithPicture" enabled="true">
 			<commandLine>ffmpeg</commandLine>
 			<parameterString>-y -i #{sourceFilePath} -i #{pictureFilePath} -filter_complex #{filterComplex} #{outFilePath}</parameterString>
