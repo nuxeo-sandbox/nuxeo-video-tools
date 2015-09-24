@@ -18,6 +18,7 @@ Depending on the tool you are using, it may be rrequired to install some tools o
   * [`Video: Slice in Parts`](#video-slice-in-parts)
   * [`Video: Watermark with picture`](#video-watermark-with-picture)
   * [Import Operations in your Studio Project](#import-operations-in-your-studio-project)
+* [Layouts](#layouts)
 * [Build-Install](#build-install)
 * [Third Party Tools Used](#third-party-tools-used)
 * [License](#license)
@@ -127,6 +128,12 @@ To use these operations in your project, you must add their JSON definition to t
 
 To do that you can install the plug-in on you server, then go to `{your-server:port}/nuxeo/site/automation/doc`. For each operation you want to use, find it in the list, open it and open its JSON definition. Now, you can copy it and paste it the Studio registry. See [here](http://doc.nuxeo.com/x/hgM7)
 
+
+## Layouts
+Use /layouts/videobox.html as the fancybox main layout
+Include two template widgets in the form displayed in the fancybox
+Set the template type to /incl/videobox_end_timestamp.xhtml and /incl/videobox_start_timestamp.xhtml
+Bind the two widgets to any string property
 
 ## Build-Install
 
