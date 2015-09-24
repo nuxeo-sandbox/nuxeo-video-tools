@@ -1,0 +1,11 @@
+.hidden {
+  display: none;
+}
+
+.videobox_column {
+  display: inline-block;
+}
+
+.videobox_layout_column {
+  	padding : 0 0 0 30px;
+}
