@@ -136,13 +136,6 @@ Set the template type to /incl/videobox_end_timestamp.xhtml and /incl/videobox_s
 Bind the two widgets to any string property
 
 ## Build-Install
-
-### Get the Marketplace Package
-In the "releases" pa	rt of this repository, you can download the marketplace package ready to be installed in your nuxeo server. It has the name `nuxeo-video-tools-mp-{version}`.
-
-You can then install it either from the `Admin Center` (see [here](http://doc.nuxeo.com/x/moFH), in the "offline installation" part) or from the command line (`nuxeoctl mp-install /path/to/nuxeo-video-tools-mp-{version}`)
-
-### Build
 Assuming [`maven`](http://maven.apache.org) (min. 3.2.1) is installed on your computer:
 
 ```
@@ -156,6 +149,8 @@ mvn clean install
 
 * The plug-in is in `nuxeo-video-tools/nuxeo-video-tools-plugin/target/`, its name is `nuxeo-video-tools-plugin-{version}.jar`.
 * The Marketplace Package is in `nuxeo-video-tools/nuxeo-video-tools-mp/target`, its name is `nuxeo-video-tools-mp-{version}.zip`.
+
+Also, if you just want the package without building it, just ask us :->
 
 ## Third Party Tools Used
 * [`ffmpeg`](http://ffmpeg.org): ffmpeg is already requested by nuxeo for its default Video handling (storyboard, automatic transcoding, extraction of info), so it is likely you already have it installed. You can also check our [Installing and Setting Up Related Software](http://doc.nuxeo.com/x/zgJc) page.
