@@ -1,13 +1,13 @@
-<f:subview   xmlns:nxu="http://nuxeo.org/nxweb/util"
-             xmlns:ui="http://java.sun.com/jsf/facelets"
-             xmlns:f="http://java.sun.com/jsf/core"
-             xmlns:a4j="http://richfaces.org/a4j"
-             xmlns:h="http://java.sun.com/jsf/html"
-             xmlns:c="http://java.sun.com/jstl/core"
-             xmlns:nxh="http://nuxeo.org/nxweb/html"
-             xmlns:nxl="http://nuxeo.org/nxforms/layout"
-             xmlns:nxd="http://nuxeo.org/nxweb/document"
-             id="#{widget.id}">
+<f:subview xmlns:nxu="http://nuxeo.org/nxweb/util"
+           xmlns:ui="http://java.sun.com/jsf/facelets"
+           xmlns:f="http://java.sun.com/jsf/core"
+           xmlns:a4j="http://richfaces.org/a4j"
+           xmlns:h="http://java.sun.com/jsf/html"
+           xmlns:c="http://java.sun.com/jstl/core"
+           xmlns:nxh="http://nuxeo.org/nxweb/html"
+           xmlns:nxl="http://nuxeo.org/nxforms/layout"
+           xmlns:nxd="http://nuxeo.org/nxweb/document"
+           id="#{widget.id}">
 
     <link rel="stylesheet" type="text/css" href="#{contextPath}/css/videojs.rangeslider.css"/>
     <link rel="stylesheet" type="text/css" href="#{contextPath}/css/videobox.css"/>
@@ -16,45 +16,55 @@
     <script src="#{contextPath}/scripts/videobox.js"></script>
 
     <h3>
-        <h:outputText value="#{action.properties.title}" />
+        <h:outputText value="#{action.properties.title}"/>
     </h3>
 
     <h:form enctype="multipart/form-data" id="#{fancyboxFormId}">
 
-        <div class="video-js-box videobox_column">
-            <video id="video_1"
-                   name="video_1"
-                   class="video-js vjs-default-skin"
-                   width="640"
-                   height="480"
-                   controls="controls"
-                   preload="metadata"
-                   poster="#{videoActions.getURLForStaticPreview(currentDocument)}">
-                <source src="#{videoActions.getTranscodedVideoURL(currentDocument, 'WebM 480p')}" type='video/webm'/>
-            </video>
-        </div>
+        <table>
+            <tr>
+                <td>
+                    <div class="video-js-box">
+                        <video id="video_1"
+                               name="video_1"
+                               class="video-js vjs-default-skin"
+                               width="640"
+                               height="480"
+                               controls="controls"
+                               preload="auto"
+                               autoplay="true"
+                               muted="true"
+                               poster="#{videoActions.getURLForStaticPreview(currentDocument)}">
+                            <source src="#{videoActions.getTranscodedVideoURL(currentDocument, 'WebM 480p')}"
+                                    type='video/webm'/>
+                        </video>
+                    </div>
 
-        <script type="text/javascript">
-            jQuery(document).ready(function() {
-                initVideoJs(document.getElementsByName('video_1')[0],"#{action.properties.sliderOn}");
-            });
-        </script>
-
-        <div class="content videobox_column videobox_layout_column" style="overflow:auto;">
-            <nxl:layout name="#{action.properties.layout}" mode="edit"
-                        value="#{fancyBoxHelper.documentModel}"/>
-        </div>
+                    <script type="text/javascript">
+                        jQuery(document).ready(function() {
+                            initVideoJs(document.getElementsByName('video_1')[0],"#{action.properties.sliderOn}");
+                        });
+                    </script>
+                </td>
+                <td>
+                    <div class="content" style="overflow:auto;">
+                        <nxl:layout name="#{action.properties.layout}" mode="edit"
+                                    value="#{fancyBoxHelper.documentModel}"/>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
         <div class="buttonsGadget">
-                <h:commandButton styleClass="button"
-                                 onclick="document.getElementById('#{fancyboxFormId}_waiter').className = '';"
-                                 action="#{fancyBoxHelper.process(action.properties.chain)}"
-                                 value="#{action.properties.processLabel}"/>
-                <a4j:commandButton styleClass="button"
-                                   immediate="true" ajaxSingle="true"
-                                   action="#{fancyBoxHelper.cancel()}"
-                                   value="#{messages['command.cancel']}"
-                                   oncomplete="jQuery.fancybox.close();"/>
+            <h:commandButton styleClass="button"
+                             onclick="document.getElementById('#{fancyboxFormId}_waiter').className = '';"
+                             action="#{fancyBoxHelper.process(action.properties.chain)}"
+                             value="#{action.properties.processLabel}"/>
+            <a4j:commandButton styleClass="button"
+                               immediate="true" ajaxSingle="true"
+                               action="#{fancyBoxHelper.cancel()}"
+                               value="#{messages['command.cancel']}"
+                               oncomplete="jQuery.fancybox.close();"/>
             <span class="displayN" id="#{fancyboxFormId}_waiter">
                 <h:graphicImage value="/img/standart_waiter.gif"/>
             </span>

@@ -1,19 +1,23 @@
 function initVideoJs(videoElement,sliderOn) {
-
   var video = vjs(videoElement);
-  video.hideControlTime();
-
   // set sliders
   if (sliderOn === 'true') {
-    video.rangeslider({hidden:false});
+    video.rangeslider({hidden:false,controlTime:false});
   } else {
-    video.rangeslider({hidden:true});
+    video.rangeslider({hidden:true,controlTime:false});
   }
 
   var current = jQuery('#videobox_current_timestamp :input').first();
 
+  var autostop = true;
+
   video.on('timeupdate',function() {
     if (current !== undefined) current.attr('value',''+videojs.round(video.currentTime(),3));
+    if (autostop) {
+      autostop = false;
+      this.pause();
+      this.currentTime(0);
+    }
   });
 
   if (sliderOn === 'true') {
@@ -26,10 +30,4 @@ function initVideoJs(videoElement,sliderOn) {
       if (end !== undefined) end.attr('value',videojs.round(values.end,3));
     });
   }
-
-  video.ready(function(){
-    this.play();
-    this.pause();
-  });
-
 }
