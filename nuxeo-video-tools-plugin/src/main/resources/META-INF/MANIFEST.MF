@@ -7,9 +7,12 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Nuxeo
-Nuxeo-Component: OSGI-INF/extensions/VideoToolsConverters.xml,OSGI-INF
- /extensions/VideoToolsCoreTypes.xml,OSGI-INF/extensions/VideoToolsWor
- ks.xml,OSGI-INF/extensions/VideoToolsListeners.xml,OSGI-INF/extension
- s/VideoToolsOperations.xml,OSGI-INF/extensions/VideoToolsCommandLines
- .xml,OSGI-INF/extensions/closedcaptions-tab-config.xml
+Nuxeo-Component: OSGI-INF/extensions/VideoToolsConverters.xml,
+ OSGI-INF/extensions/VideoToolsCoreTypes.xml,
+ OSGI-INF/extensions/VideoToolsWorks.xml,
+ OSGI-INF/extensions/VideoToolsListeners.xml,
+ OSGI-INF/extensions/VideoToolsOperations.xml,
+ OSGI-INF/extensions/VideoToolsCommandLines.xml,
+ OSGI-INF/extensions/closedcaptions-tab-config.xml,
+ OSGI-INF/extensions/Widget.xml;
 
