@@ -26,4 +26,5 @@
 
 .vjs-control-active {
 	text-shadow: 0em 0em 1em #FFF;
+    background-color: rgba(102,168,204,0.5);
 }
