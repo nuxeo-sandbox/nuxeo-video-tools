@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
@@ -47,7 +47,7 @@ public class VideoWatermarker extends BaseVideoTools {
      * 
      */
     public Blob watermarkWithPicture(String inFinalFileName, Blob inWatermark, String x, String y) throws IOException,
-            CommandNotAvailable, ClientException {
+            CommandNotAvailable, NuxeoException {
 
         Blob result = null;
         String originalMimeType;
@@ -81,11 +81,11 @@ public class VideoWatermarker extends BaseVideoTools {
                     params);
             
             if (clResult.getError() != null) {
-                throw new ClientException("Failed to execute the command <"
+                throw new NuxeoException("Failed to execute the command <"
                         + COMMAND_WATERMARK_WITH_PICTURE + ">", clResult.getError());
             }
             if (!clResult.isSuccessful()) {
-                throw new ClientException("Failed to execute the command <"
+                throw new NuxeoException("Failed to execute the command <"
                         + COMMAND_WATERMARK_WITH_PICTURE + ">. Final command [ "
                         + clResult.getCommandLine() + " ] returned with error "
                         + clResult.getReturnCode());

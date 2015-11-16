@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.nuxeo.video.tools</groupId>
     <artifactId>nuxeo-video-tools-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>nuxeo-video-tools-mp</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>zip</packaging>
   <name>Marketplace package - Video Tools</name>
 

@@ -23,13 +23,10 @@ import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
-import org.nuxeo.video.tools.VideoConverter;
-import org.nuxeo.video.tools.VideoSlicer;
 import org.nuxeo.video.tools.VideoWatermarker;
 
 /**
@@ -54,7 +51,7 @@ public class VideoWatermarkWithPictureOp {
     protected String resultFileName;
 
     @OperationMethod
-    public Blob run(Blob inBlob) throws ClientException, IOException, CommandNotAvailable {
+    public Blob run(Blob inBlob) throws NuxeoException, IOException, CommandNotAvailable {
 
         Blob result = null;
 

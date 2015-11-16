@@ -24,7 +24,7 @@ import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
@@ -82,12 +82,12 @@ public class VideoSlicer extends BaseVideoTools {
 
             // Get the result, and first, handle errors.
             if (clResult.getError() != null) {
-                throw new ClientException("Failed to execute the command <" + commandLineName + ">",
+                throw new NuxeoException("Failed to execute the command <" + commandLineName + ">",
                         clResult.getError());
             }
 
             if (!clResult.isSuccessful()) {
-                throw new ClientException("Failed to execute the command <" + commandLineName + ">. Final command [ "
+                throw new NuxeoException("Failed to execute the command <" + commandLineName + ">. Final command [ "
                         + clResult.getCommandLine() + " ] returned with error " + clResult.getReturnCode());
             }
 
@@ -147,12 +147,12 @@ public class VideoSlicer extends BaseVideoTools {
                 if (clResult.getError() != null) {
                     System.out.println("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS + "> : "
                             + clResult.getError());
-                    throw new ClientException("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS + ">",
+                    throw new NuxeoException("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS + ">",
                             clResult.getError());
                 }
 
                 if (!clResult.isSuccessful()) {
-                    throw new ClientException("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS
+                    throw new NuxeoException("Failed to execute the command <" + COMMAND_SLICER_SEGMENTS
                             + ">. Final command [ " + clResult.getCommandLine() + " ] returned with error "
                             + clResult.getReturnCode());
                 }

@@ -25,7 +25,7 @@ import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
@@ -78,14 +78,14 @@ public class VideoConcatDemuxer {
         }
     }
 
-    public Blob concat() throws IOException, CommandNotAvailable, ClientException {
+    public Blob concat() throws IOException, CommandNotAvailable, NuxeoException {
         return concat(null);
     }
 
     /*
      * The command line is: ffmpeg -f concat -i #{listFilePath} -c copy #{outFilePath}
      */
-    public Blob concat(String inFinalFileName) throws IOException, CommandNotAvailable, ClientException {
+    public Blob concat(String inFinalFileName) throws IOException, CommandNotAvailable, NuxeoException {
 
         Blob result = null;
         String originalMimeType;
@@ -130,12 +130,12 @@ public class VideoConcatDemuxer {
 
             // Get the result, and first, handle errors.
             if (clResult.getError() != null) {
-                throw new ClientException("Failed to execute the command <" + COMMAND_CONCAT_VIDEOS_DEMUXER + ">",
+                throw new NuxeoException("Failed to execute the command <" + COMMAND_CONCAT_VIDEOS_DEMUXER + ">",
                         clResult.getError());
             }
 
             if (!clResult.isSuccessful()) {
-                throw new ClientException("Failed to execute the command <" + COMMAND_CONCAT_VIDEOS_DEMUXER
+                throw new NuxeoException("Failed to execute the command <" + COMMAND_CONCAT_VIDEOS_DEMUXER
                         + ">. Final command [ " + clResult.getCommandLine() + " ] returned with error "
                         + clResult.getReturnCode());
             }

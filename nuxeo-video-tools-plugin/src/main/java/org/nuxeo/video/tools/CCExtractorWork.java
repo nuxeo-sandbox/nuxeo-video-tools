@@ -26,9 +26,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventService;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
@@ -135,7 +135,7 @@ public class CCExtractorWork extends AbstractWork {
 
     }
 
-    protected Video getVideoToConvert() throws ClientException {
+    protected Video getVideoToConvert() throws NuxeoException {
         DocumentModel doc = session.getDocument(new IdRef(docId));
         VideoDocument videoDocument = doc.getAdapter(VideoDocument.class);
         Video video = videoDocument.getVideo();

@@ -22,23 +22,17 @@ import java.io.IOException;
 import jdk.nashorn.internal.objects.NativeArray;
 
 import org.nuxeo.ecm.automation.core.Constants;
-import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
-import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
-import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.video.tools.VideoConcatDemuxer;
-import org.nuxeo.video.tools.VideoSlicer;
 
 /**
  * Merge 2-n videos in one using ffmpeg demuxer. Please, see to ffmpeg documentation about efficiency, timestamps, ...
@@ -55,7 +49,7 @@ public class VideoConcatDemuxerOp {
     protected String resultFileName;
 
     @OperationMethod
-    public Blob run(BlobList inBlobs) throws ClientException, IOException, CommandNotAvailable {
+    public Blob run(BlobList inBlobs) throws NuxeoException, IOException, CommandNotAvailable {
 
         Blob result = null;
 
@@ -67,7 +61,7 @@ public class VideoConcatDemuxerOp {
     }
 
     @OperationMethod
-    public Blob run(DocumentModelList inDocs) throws ClientException, IOException, CommandNotAvailable {
+    public Blob run(DocumentModelList inDocs) throws NuxeoException, IOException, CommandNotAvailable {
 
         Blob result = null;
 
@@ -85,7 +79,7 @@ public class VideoConcatDemuxerOp {
     // This is kind of a workaround, waiting for 7.4 or higher to correctly convert
     // JS arrays.
     @OperationMethod
-    public Blob run(NativeArray inDocs) throws ClientException, IOException, CommandNotAvailable {
+    public Blob run(NativeArray inDocs) throws NuxeoException, IOException, CommandNotAvailable {
 
         DocumentModelListImpl dml = new DocumentModelListImpl();
         for (int i = 0; i < inDocs.size(); ++i) {

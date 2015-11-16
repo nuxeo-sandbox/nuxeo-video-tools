@@ -23,7 +23,6 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.video.tools.VideoConverter;
-import org.nuxeo.video.tools.VideoSlicer;
 
 /**
  * Uses a video converter (declared in an XML extension) to transcode the video

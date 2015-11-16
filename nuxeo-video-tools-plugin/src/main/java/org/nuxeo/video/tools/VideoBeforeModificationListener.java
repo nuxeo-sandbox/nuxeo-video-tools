@@ -20,7 +20,7 @@ package org.nuxeo.video.tools;
 import static org.nuxeo.video.tools.VideoToolsConstants.*;
 import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.*;
 
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
@@ -37,7 +37,7 @@ import org.nuxeo.ecm.platform.video.VideoConstants;
 public class VideoBeforeModificationListener implements EventListener {
 
     @Override
-    public void handleEvent(Event event) throws ClientException {
+    public void handleEvent(Event event) throws NuxeoException {
         EventContext ctx = event.getContext();
         if (!(ctx instanceof DocumentEventContext)) {
             return;

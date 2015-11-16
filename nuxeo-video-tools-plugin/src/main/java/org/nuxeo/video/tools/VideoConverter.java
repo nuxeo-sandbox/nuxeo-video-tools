@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
@@ -87,7 +87,7 @@ public class VideoConverter extends BaseVideoTools {
         }
 
         if (converter == null || converter.isEmpty()) {
-            throw new ClientException("Missing the name of a converter");
+            throw new NuxeoException("Missing the name of a converter");
         }
 
         loadVideoInfoIfNeeded();

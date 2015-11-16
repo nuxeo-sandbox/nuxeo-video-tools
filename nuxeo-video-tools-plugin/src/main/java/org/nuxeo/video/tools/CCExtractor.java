@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
@@ -117,12 +117,12 @@ public class CCExtractor extends BaseVideoTools {
 
         // Get the result, and first, handle errors.
         if (clResult.getError() != null) {
-            throw new ClientException("Failed to execute the command <"
+            throw new NuxeoException("Failed to execute the command <"
                     + commandLineName + ">", clResult.getError());
         }
 
         if (!clResult.isSuccessful()) {
-            throw new ClientException("Failed to execute the command <"
+            throw new NuxeoException("Failed to execute the command <"
                     + commandLineName + ">. Final command [ "
                     + clResult.getCommandLine() + " ] returned with error "
                     + clResult.getReturnCode());

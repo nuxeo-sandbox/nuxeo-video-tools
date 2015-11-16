@@ -25,7 +25,7 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.video.tools.VideoSlicer;
 
@@ -51,7 +51,7 @@ public class VideoSlicerOp {
     protected String commandLine;
 
     @OperationMethod(collector = BlobCollector.class)
-    public Blob run(Blob inBlob) throws ClientException {
+    public Blob run(Blob inBlob) throws NuxeoException {
 
         Blob result = null;
 
@@ -62,7 +62,7 @@ public class VideoSlicerOp {
         try {
             result = slicer.slice(start, duration);
         } catch (IOException | CommandNotAvailable e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         }
 
         return result;

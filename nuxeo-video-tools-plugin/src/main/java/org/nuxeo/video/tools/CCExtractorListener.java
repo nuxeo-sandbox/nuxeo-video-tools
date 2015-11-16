@@ -19,7 +19,7 @@ package org.nuxeo.video.tools;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventBundle;
@@ -46,7 +46,7 @@ public class CCExtractorListener implements PostCommitFilteringEventListener {
     public static final Log log = LogFactory.getLog(CCExtractorListener.class);
 
     @Override
-    public void handleEvent(EventBundle events) throws ClientException {
+    public void handleEvent(EventBundle events) throws NuxeoException {
         for (Event event : events) {
             if (VIDEO_CHANGED_EVENT.equals(event.getName())) {
                 handleEvent(event);
@@ -54,7 +54,7 @@ public class CCExtractorListener implements PostCommitFilteringEventListener {
         }
     }
 
-    public void handleEvent(Event event) throws ClientException {
+    public void handleEvent(Event event) throws NuxeoException {
         EventContext ctx = event.getContext();
         if (!(ctx instanceof DocumentEventContext)) {
             return;

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.convert.api.ConversionException;
@@ -33,7 +33,7 @@ public abstract class BaseVideoToolsCommandLineConverter extends
     protected BlobHolder buildResult(List<String> cmdOutput,
             CmdParameters cmdParams) {
 
-        String outputPath = cmdParams.getParameters().get("outDirPath");
+        String outputPath = cmdParams.getParameters().get("outDirPath").toString();
         File outputDir = new File(outputPath);
         File[] files = outputDir.listFiles();
         List<Blob> blobs = new ArrayList<Blob>();
@@ -55,7 +55,7 @@ public abstract class BaseVideoToolsCommandLineConverter extends
         Map<String, Blob> cmdBlobParams = new HashMap<String, Blob>();
         try {
             cmdBlobParams.put("sourceFilePath", blobHolder.getBlob());
-        } catch (ClientException e) {
+        } catch (NuxeoException e) {
             throw new ConversionException("Unable to get Blob for holder", e);
         }
         return cmdBlobParams;

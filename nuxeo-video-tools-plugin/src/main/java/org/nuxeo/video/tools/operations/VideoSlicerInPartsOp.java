@@ -20,21 +20,13 @@ package org.nuxeo.video.tools.operations;
 import java.io.IOException;
 
 import org.nuxeo.ecm.automation.core.Constants;
-import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
-import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
-import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
-import org.nuxeo.ecm.platform.video.VideoHelper;
-import org.nuxeo.ecm.platform.video.VideoInfo;
 import org.nuxeo.video.tools.VideoSlicer;
 
 /**
@@ -51,7 +43,7 @@ public class VideoSlicerInPartsOp {
     protected long duration;
 
     @OperationMethod
-    public BlobList run(Blob inBlob) throws ClientException {
+    public BlobList run(Blob inBlob) throws NuxeoException {
 
         BlobList parts = null;
 
@@ -59,7 +51,7 @@ public class VideoSlicerInPartsOp {
         try {
             parts = vs.slice("" + duration);
         } catch (IOException | CommandNotAvailable e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         }
 
         return parts;
