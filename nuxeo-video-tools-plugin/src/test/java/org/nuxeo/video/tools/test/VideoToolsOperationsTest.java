@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nuxeo.video.tools.CCExtractor;
 import org.nuxeo.video.tools.operations.ExtractClosedCaptionsOp;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -130,6 +131,11 @@ public class VideoToolsOperationsTest {
     public void testClosedCaptionsWithBlob() throws Exception {
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        
+        if(!CCExtractor.ccextractorIsAvailable()) {
+            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
+            return;
+        }
 
         OperationContext ctx = new OperationContext(coreSession);
         OperationChain chain;
@@ -174,6 +180,11 @@ public class VideoToolsOperationsTest {
     public void testClosedCaptionsWithDoc() throws Exception {
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        
+        if(!CCExtractor.ccextractorIsAvailable()) {
+            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
+            return;
+        }
         
         OperationContext ctx = new OperationContext(coreSession);
         OperationChain chain;

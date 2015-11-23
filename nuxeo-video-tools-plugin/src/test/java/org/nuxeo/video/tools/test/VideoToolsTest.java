@@ -41,9 +41,12 @@ import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.test.CoreFeature;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.ecm.platform.video.VideoHelper;
 import org.nuxeo.ecm.platform.video.VideoInfo;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -62,7 +65,7 @@ public class VideoToolsTest {
     protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
 
     protected static final String VIDEO_NAME = "files/VideoLan-Example.ts";
-
+    
     protected void doLog(String what) {
         System.out.println(what);
     }
@@ -96,6 +99,11 @@ public class VideoToolsTest {
     public void testExtractCC() throws Exception {
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        
+        if(!CCExtractor.ccextractorIsAvailable()) {
+            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
+            return;
+        }
 
         File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
         FileBlob fb = new FileBlob(f);
@@ -119,6 +127,11 @@ public class VideoToolsTest {
     public void testExtractCC_sliced() throws Exception {
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        
+        if(!CCExtractor.ccextractorIsAvailable()) {
+            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
+            return;
+        }
 
         File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
         FileBlob fb = new FileBlob(f);

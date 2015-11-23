@@ -30,6 +30,7 @@ import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
@@ -58,12 +59,15 @@ public class CCExtractor extends BaseVideoTools {
     public static final List<String> TEXT_OUTFORMATS = Collections.unmodifiableList(Arrays.asList(
             "srt", "txt", "ttxt"));
 
-    String startAt;
+    protected String startAt;
 
-    String endAt;
+    protected String endAt;
+    
+    protected static int ccextractorIsAvailable = -1;
 
     public CCExtractor(Blob inBlob) {
         super(inBlob);
+        
     }
 
     public CCExtractor(Blob inBlob, String inStartAt, String inEndAt) {
@@ -71,6 +75,18 @@ public class CCExtractor extends BaseVideoTools {
 
         setStartAt(inStartAt);
         setEndAt(inEndAt);
+        
+    }
+    
+    public static boolean ccextractorIsAvailable() {
+        
+        if(ccextractorIsAvailable == -1) {
+            CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+            CommandAvailability ca = cles.getCommandAvailability(CCExtractor.COMMAND_FULL_VIDEO);
+            ccextractorIsAvailable = ca.isAvailable() ? 1 : 0;
+        }
+        
+        return ccextractorIsAvailable == 1;
     }
 
     public Blob extractCC() throws CommandNotAvailable, IOException {
