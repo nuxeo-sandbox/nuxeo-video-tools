@@ -188,10 +188,10 @@ public class VideoToolsTest {
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
-        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-TestSlice.mp4");
         FileBlob fb1 = new FileBlob(f1);
         double originalDuration = VideoHelper.getVideoInfo(fb1).getDuration();
-        
+                
         VideoSlicer vs = new VideoSlicer(fb1);
         BlobList sliced = vs.slice("3");
         assertNotNull(sliced);
