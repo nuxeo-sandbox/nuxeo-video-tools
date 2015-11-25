@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,10 +40,14 @@ import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.Blobs;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.test.CoreFeature;
-import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
+import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
+import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
+import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.ecm.platform.video.VideoHelper;
 import org.nuxeo.ecm.platform.video.VideoInfo;
@@ -64,7 +69,11 @@ public class VideoToolsTest {
 
     protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
 
-    protected static final String VIDEO_NAME = "files/VideoLan-Example.ts";
+    protected static final String VIDEO_WITH_CC = "files/VideoLan-Example.ts";
+    
+    protected static final String BASIC_CONVERT_COMMAND = "videoBasicConvert";
+    
+    protected static Boolean ffmpegLooksOk = null;
     
     protected void doLog(String what) {
         System.out.println(what);
@@ -79,12 +88,55 @@ public class VideoToolsTest {
 
     @Before
     public void setUp() {
-
     }
 
     @After
     public void cleanup() {
 
+    }
+    
+    public boolean ffmpegLooksOk() throws IOException {
+
+        if(ffmpegLooksOk == null) {
+            ffmpegLooksOk = false;
+           
+            Blob result = null;
+            File f1 = FileUtils.getResourceFileFromContext("files/small.mp4");
+            FileBlob fb1 = new FileBlob(f1);
+
+         // Prepare command line parameters
+            CmdParameters params = new CmdParameters();
+            params.addNamedParameter("sourceFilePath", fb1.getFile().getAbsolutePath());
+            
+            result = Blobs.createBlobWithExtension(".webm");
+            params.addNamedParameter("outFilePath", result.getFile().getAbsolutePath());
+            
+         // Run and get results
+            try {
+                CommandLineExecutorService cles = Framework.getService(CommandLineExecutorService.class);
+                ExecResult clResult = cles.execCommand(BASIC_CONVERT_COMMAND, params);
+            
+                if (clResult.getError() != null) {
+                    throw new NuxeoException("Failed to execute the command <"
+                            + BASIC_CONVERT_COMMAND + ">", clResult.getError());
+                }
+                if (!clResult.isSuccessful()) {
+                    throw new NuxeoException("Failed to execute the command <"
+                            + BASIC_CONVERT_COMMAND + ">. Final command [ "
+                            + clResult.getCommandLine() + " ] returned with error "
+                            + clResult.getReturnCode());
+                }
+
+                // If we are here, all is good
+                ffmpegLooksOk = true;
+                
+            } catch (CommandNotAvailable | NuxeoException e) {
+                ffmpegLooksOk = false;
+            }
+        }
+        
+        return ffmpegLooksOk;
+        
     }
 
     protected String fileBlobToString(FileBlob inBlob) throws IOException {
@@ -105,7 +157,7 @@ public class VideoToolsTest {
             return;
         }
 
-        File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
+        File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
         FileBlob fb = new FileBlob(f);
 
         CCExtractor cce = new CCExtractor(fb);
@@ -128,12 +180,13 @@ public class VideoToolsTest {
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
+        Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
         if(!CCExtractor.ccextractorIsAvailable()) {
             doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
             return;
         }
 
-        File f = FileUtils.getResourceFileFromContext(VIDEO_NAME);
+        File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
         FileBlob fb = new FileBlob(f);
 
         CCExtractor cce = new CCExtractor(fb, "00:10", "00:20");
@@ -153,6 +206,11 @@ public class VideoToolsTest {
 
     @Test
     public void testSlice() throws Exception {
+        
+        if(ffmpegLooksOk()) {
+            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice");
+            return;
+        }
         
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
@@ -185,6 +243,11 @@ public class VideoToolsTest {
 
     @Test
     public void testSliceInParts() throws Exception {
+        
+        if(!ffmpegLooksOk()) {
+            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts");
+            return;
+        }
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
@@ -210,6 +273,11 @@ public class VideoToolsTest {
 
     @Test
     public void testConcatDemuxer() throws Exception {
+        
+        if(!ffmpegLooksOk()) {
+            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer");
+            return;
+        }
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
 
@@ -252,6 +320,11 @@ public class VideoToolsTest {
 
     @Test
     public void testConvert() throws Exception {
+        
+        if(!ffmpegLooksOk()) {
+            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert");
+            return;
+        }
 
         doLog(getCurrentMethodName(new RuntimeException()) + "...");
 
