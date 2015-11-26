@@ -20,7 +20,7 @@
 			<sourceMimeType>video/x-ms-asf</sourceMimeType>
 			<sourceMimeType>video/x-msvideo</sourceMimeType>
 			<sourceMimeType>video/flv</sourceMimeType>
-			<destinationMimeType>video/webm</destinationMimeType>
+			<destinationMimeType>video/x-msvideo</destinationMimeType>
 			<parameters>
 				<parameter name="CommandLineName">convertToAVI</parameter>
 				<parameter name="videoMimeType">video/x-msvideo</parameter>

@@ -26,6 +26,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
+import org.nuxeo.ecm.core.convert.api.ConversionException;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.platform.video.VideoHelper;
 import org.nuxeo.ecm.platform.video.VideoInfo;
@@ -106,7 +107,7 @@ public class VideoConverter extends BaseVideoTools {
         BlobHolder result = null;
         try {
             result = conversionService.convert(converter, source, parameters);
-        } catch (Exception e) {
+        } catch (ConversionException e) {
             log.error("Error while converting the video", e);
             result = null;
         }

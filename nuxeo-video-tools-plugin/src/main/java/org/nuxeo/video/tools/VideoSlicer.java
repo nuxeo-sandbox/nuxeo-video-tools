@@ -51,6 +51,16 @@ public class VideoSlicer extends BaseVideoTools {
         super(inBlob);
     }
 
+    /**
+     * Slices the video at inStart for inDuration and returns a new blob
+     * 
+     * @param inStart
+     * @param inDuration
+     * @return Blob, slice of the original
+     * @throws IOException
+     * @throws CommandNotAvailable
+     * @since 7.1
+     */
     public Blob slice(String inStart, String inDuration) throws IOException, CommandNotAvailable {
 
         Blob sliced = null;
@@ -108,7 +118,7 @@ public class VideoSlicer extends BaseVideoTools {
      * Slices the video in n segments of inDuration each (with possible approximations)
      * 
      * @param inDuration
-     * @return
+     * @return 1-n blobs of same duration (with the last one adjusted)
      * @throws IOException
      * @throws CommandNotAvailable
      * @since 7.1
