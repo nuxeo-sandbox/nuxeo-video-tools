@@ -72,7 +72,7 @@ public class VideoToolsTest {
 
     protected static final String VIDEO_WITH_CC = "files/VideoLan-Example.ts";
         
-    protected static Boolean ffmpegLooksOk = null;
+    protected static Boolean ffmpegOk = null;
 
     @Before
     public void setUp() {
@@ -85,8 +85,8 @@ public class VideoToolsTest {
     
     public boolean ffmpegLooksOk() throws IOException {
 
-        if(ffmpegLooksOk == null) {
-            ffmpegLooksOk = false;
+        if(ffmpegOk == null) {
+            ffmpegOk = false;
            
             Blob result = null;
             File f1 = FileUtils.getResourceFileFromContext("files/small.mp4");
@@ -95,11 +95,11 @@ public class VideoToolsTest {
             VideoConverter vc = new VideoConverter(fb1);
             result = vc.convert(0, "convertToWebM");
             if(result != null) {
-                ffmpegLooksOk = true;
+                ffmpegOk = true;
             }
         }
         
-        return ffmpegLooksOk;
+        return ffmpegOk;
         
     }
 
@@ -156,7 +156,7 @@ public class VideoToolsTest {
     @Test
     public void testSlice() throws Exception {
         
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice", ffmpegLooksOk);
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice", ffmpegLooksOk());
 
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
         FileBlob fb1 = new FileBlob(f1);
@@ -186,7 +186,7 @@ public class VideoToolsTest {
     @Test
     public void testSliceInParts() throws Exception {
         
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts", ffmpegLooksOk);
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts", ffmpegLooksOk());
         
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-TestSlice.mp4");
         FileBlob fb1 = new FileBlob(f1);
@@ -209,7 +209,7 @@ public class VideoToolsTest {
     @Test
     public void testConcatDemuxer() throws Exception {
         
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer", ffmpegLooksOk);
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer", ffmpegLooksOk());
 
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
         File f2 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0010-08.mp4");
@@ -249,7 +249,7 @@ public class VideoToolsTest {
     @Test
     public void testConvert() throws Exception {
         
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert", ffmpegLooksOk);
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert", ffmpegLooksOk());
 
         VideoConverter vc;
         Blob result;
@@ -315,7 +315,7 @@ public class VideoToolsTest {
     @Test
     public void testConvertAVI() throws Exception {
         
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvertAVI", ffmpegLooksOk);
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvertAVI", ffmpegLooksOk());
           
         File f = FileUtils.getResourceFileFromContext("files/Test-AC3-v2.0.avi");
         FileBlob fb = new FileBlob(f);

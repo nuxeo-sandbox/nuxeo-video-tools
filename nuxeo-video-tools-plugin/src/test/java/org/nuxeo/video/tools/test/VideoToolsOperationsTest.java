@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,17 +77,6 @@ public class VideoToolsOperationsTest {
     @Inject
     EventService eventService;
 
-    protected void doLog(String what) {
-        System.out.println(what);
-    }
-
-    // Not sure it's the best way to get the current method name, but at least
-    // it works
-    protected String getCurrentMethodName(RuntimeException e) {
-        StackTraceElement currentElement = e.getStackTrace()[0];
-        return currentElement.getMethodName();
-    }
-
     protected DocumentModel createVideoDocument(File inFile, boolean inSaveIt) {
 
         DocumentModel videoDoc = coreSession.createDocumentModel(
@@ -129,13 +119,8 @@ public class VideoToolsOperationsTest {
 
     @Test
     public void testClosedCaptionsWithBlob() throws Exception {
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
-        if(!CCExtractor.ccextractorIsAvailable()) {
-            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
-            return;
-        }
+        Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
 
         OperationContext ctx = new OperationContext(coreSession);
         OperationChain chain;
@@ -172,19 +157,12 @@ public class VideoToolsOperationsTest {
         assertTrue(ccFull.length() > ccPart.length());
         assertTrue(ccPart.indexOf("You should be a detective") > -1);
 
-        
-        doLog("done");
     }
 
     @Test
     public void testClosedCaptionsWithDoc() throws Exception {
 
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
-        
-        if(!CCExtractor.ccextractorIsAvailable()) {
-            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
-            return;
-        }
+        Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
         
         OperationContext ctx = new OperationContext(coreSession);
         OperationChain chain;
@@ -204,8 +182,6 @@ public class VideoToolsOperationsTest {
         ccFull = fileBlobToString((FileBlob) result);
         assertNotNull(ccFull);
         assertTrue(ccFull.indexOf("You should be a detective") > -1);
-
-        doLog("done");
         
     }
 }
