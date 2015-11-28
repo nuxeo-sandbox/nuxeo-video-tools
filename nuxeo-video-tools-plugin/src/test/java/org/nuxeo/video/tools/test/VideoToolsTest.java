@@ -75,17 +75,6 @@ public class VideoToolsTest {
     protected static final String BASIC_CONVERT_COMMAND = "videoBasicConvert";
     
     protected static Boolean ffmpegLooksOk = null;
-    
-    protected void doLog(String what) {
-        System.out.println(what);
-    }
-
-    // Not sure it's the best way to get the current method name, but at least
-    // it works
-    protected String getCurrentMethodName(RuntimeException e) {
-        StackTraceElement currentElement = e.getStackTrace()[0];
-        return currentElement.getMethodName();
-    }
 
     @Before
     public void setUp() {
@@ -126,13 +115,8 @@ public class VideoToolsTest {
 
     @Test
     public void testExtractCC() throws Exception {
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
-        if(!CCExtractor.ccextractorIsAvailable()) {
-            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
-            return;
-        }
+        Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
 
         File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
         FileBlob fb = new FileBlob(f);
@@ -148,20 +132,12 @@ public class VideoToolsTest {
         assertNotNull(cc);
         assertNotEquals("", cc);
 
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
-
     }
 
     @Test
     public void testExtractCC_sliced() throws Exception {
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
         
         Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
-        if(!CCExtractor.ccextractorIsAvailable()) {
-            doLog("ccextractor is not installed. Cannot test ClosedCaption extraction");
-            return;
-        }
 
         File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
         FileBlob fb = new FileBlob(f);
@@ -177,27 +153,19 @@ public class VideoToolsTest {
         assertNotNull(cc);
         assertNotEquals("", cc);
 
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
-
     }
 
     @Test
     public void testSlice() throws Exception {
         
-        if(ffmpegLooksOk()) {
-            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice");
-            return;
-        }
-        
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
-        
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice", ffmpegLooksOk);
+
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
         FileBlob fb1 = new FileBlob(f1);
         
         VideoInfo vi;
         
         // Default slicer
-        doLog("    - Default slicer");
         VideoSlicer vs = new VideoSlicer(fb1);
         Blob result = vs.slice("0", "3");
         assertNotNull(result);
@@ -207,7 +175,6 @@ public class VideoToolsTest {
 
         
         // slicer-by-copy
-        doLog("    - Slicer by raw copy");
         vs.setCommandLineName("videoSlicerByCopy");
         result = vs.slice("0", "3");
         assertNotNull(result);
@@ -215,19 +182,13 @@ public class VideoToolsTest {
         dFinal = vi.getDuration();
         assertEquals(3.0, dFinal, 0.0);
         
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
     }
 
     @Ignore
     @Test
     public void testSliceInParts() throws Exception {
         
-        if(!ffmpegLooksOk()) {
-            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts");
-            return;
-        }
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts", ffmpegLooksOk);
         
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-TestSlice.mp4");
         FileBlob fb1 = new FileBlob(f1);
@@ -244,20 +205,13 @@ public class VideoToolsTest {
             dFinal += VideoHelper.getVideoInfo(b).getDuration();
         }
         assertEquals(originalDuration, dFinal, 0);
-
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
         
     }
 
     @Test
     public void testConcatDemuxer() throws Exception {
         
-        if(!ffmpegLooksOk()) {
-            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer");
-            return;
-        }
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer", ffmpegLooksOk);
 
         File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
         File f2 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0010-08.mp4");
@@ -292,19 +246,12 @@ public class VideoToolsTest {
 
         assertEquals(dFinal, d1 + d2 + d3 + d4, 0.0);
 
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
-
     }
 
     @Test
     public void testConvert() throws Exception {
         
-        if(!ffmpegLooksOk()) {
-            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert");
-            return;
-        }
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert", ffmpegLooksOk);
 
         VideoConverter vc;
         Blob result;
@@ -318,7 +265,6 @@ public class VideoToolsTest {
         double originalD = vi.getDuration();
 
         // ------------------------------
-        doLog("  - MP4 -> WebM, height 200...");
         vc = new VideoConverter(fb1);
         result = vc.convert(200, "convertToWebM");
         assertNotNull(result);
@@ -328,7 +274,6 @@ public class VideoToolsTest {
         assertEquals(originalD, vi.getDuration(), 0.0);
 
         // ------------------------------
-        doLog("  - MP4 -> WebM, original height...");
         vc = new VideoConverter(fb1);
         result = vc.convert(0, "convertToWebM");
         assertNotNull(result);
@@ -338,7 +283,6 @@ public class VideoToolsTest {
         assertEquals(originalD, vi.getDuration(), 0.0);
 
         // ------------------------------
-        doLog("  - MP4 -> WebM, half height...");
         vc = new VideoConverter(fb1);
         result = vc.convert(0.5, "convertToWebM");
         assertNotNull(result);
@@ -350,7 +294,6 @@ public class VideoToolsTest {
 
         // ------------------------------
         // Just reduce size
-        doLog("  - MP4 -> MP4, reduce height...");
         vc = new VideoConverter(fb1);
         result = vc.convert(200, "convertToMP4");
         assertNotNull(result);
@@ -360,7 +303,6 @@ public class VideoToolsTest {
         assertEquals(originalD, vi.getDuration(), 0.0);
 
         // ------------------------------
-        doLog("  - MP4 -> AVI, height 200...");
         vc = new VideoConverter(fb1);
         result = vc.convert(200, "convertToAVI");
         assertNotNull(result);
@@ -369,20 +311,14 @@ public class VideoToolsTest {
         assertEquals(200, vi.getHeight());
         assertEquals(originalD, vi.getDuration(), 0.0);
 
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
     }
     
     @Ignore("Conversion with AVI not working on test machine (2015-11-26)")
     @Test
     public void testConvertAVI() throws Exception {
         
-        if(!ffmpegLooksOk()) {
-            doLog("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert");
-            return;
-        }
-
-        doLog(getCurrentMethodName(new RuntimeException()) + "...");
-        
+        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvertAVI", ffmpegLooksOk);
+          
         File f = FileUtils.getResourceFileFromContext("files/Test-AC3-v2.0.avi");
         FileBlob fb = new FileBlob(f);
         
@@ -398,8 +334,6 @@ public class VideoToolsTest {
         assertEquals(200, vi.getHeight());
         // Duration may not be the exact same in this conversion
         assertEquals(originalD, vi.getDuration(), 0.3);
-
-        doLog(getCurrentMethodName(new RuntimeException()) + ": done");
         
     }
 }
