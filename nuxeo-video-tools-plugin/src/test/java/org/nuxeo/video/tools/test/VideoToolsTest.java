@@ -71,9 +71,7 @@ public class VideoToolsTest {
     protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
 
     protected static final String VIDEO_WITH_CC = "files/VideoLan-Example.ts";
-    
-    protected static final String BASIC_CONVERT_COMMAND = "videoBasicConvert";
-    
+        
     protected static Boolean ffmpegLooksOk = null;
 
     @Before

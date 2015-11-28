@@ -65,14 +65,6 @@
 			<installationDirective>You need to install ffmpeg.
 			</installationDirective>
 		</command>
-		
-		<!-- Quick converter -->
-		<command name="videoBasicConvert" enabled="true">
-			<commandLine>ffmpeg</commandLine>
-			<parameterString>-y -i #{sourceFilePath} #{outFilePath}</parameterString>
-			<installationDirective>You need to install ffmpeg.
-			</installationDirective>
-		</command>
 
 	</extension>
 
