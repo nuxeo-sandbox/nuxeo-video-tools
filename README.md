@@ -3,6 +3,11 @@ nuxeo-video-tools
 
 This plug-in adds tools for handling videos: Slice, Merge, Extract ClosedCaptions, ...
 
+### Quality Assurance
+QA build status: ![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=Sandbox/sandbox_nuxeo-video-tools-master)
+
+[QA Last Build Page](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-video-tools-master/ws/nuxeo-video-tools-mp/target/) of the Nuxeo Package, to get the .zip package and install it on your server (no need to build it).
+
 ## About - Requirements
 `nuxeo-video-tools` is a plug-in for the [nuxeo platform](http://www.nuxeo.com). It adds tools, operations, automation for handling videos: Slice, Merge, Extract ClosedCaptions...
 
