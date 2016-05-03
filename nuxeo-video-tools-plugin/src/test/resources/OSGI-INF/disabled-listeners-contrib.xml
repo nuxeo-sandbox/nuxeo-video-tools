@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<component name="org.nuxeo.video.tools.test.listeners">
+
+	<require>org.nuxeo.platform.video.core.listeners</require>
+	<require>org.nuxeo.ecm.platform.picture.listeners</require>
+
+	<extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+		point="listener">
+		<listener enabled="false" name="videoChangedListener"></listener>
+		<listener enabled="false" name="videoStoryboardListener"></listener>
+		<listener enabled="false" name="videoAutomaticConversions"></listener>
+		
+		<listener enabled="false" name="pictureChangedListener"></listener>
+		<listener enabled="false" name="pictureViewsGenerationListener"></listener>
+	</extension>
+
+</component>

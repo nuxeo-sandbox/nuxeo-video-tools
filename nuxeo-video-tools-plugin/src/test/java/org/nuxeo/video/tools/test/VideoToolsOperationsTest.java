@@ -49,6 +49,7 @@ import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.LocalDeploy;
 
 import com.google.inject.Inject;
 
@@ -59,6 +60,7 @@ import com.google.inject.Inject;
         "org.nuxeo.ecm.platform.video.core",
         "org.nuxeo.ecm.platform.video.convert",
         "org.nuxeo.ecm.platform.picture.core" })
+@LocalDeploy({"nuxeo-video-tools-test:OSGI-INF/disabled-listeners-contrib.xml"})
 public class VideoToolsOperationsTest {
 
     protected static final Log log = LogFactory.getLog(VideoToolsOperationsTest.class);
