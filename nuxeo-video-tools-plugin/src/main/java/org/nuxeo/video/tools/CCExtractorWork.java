@@ -79,6 +79,13 @@ public class CCExtractorWork extends AbstractWork {
 
     @Override
     public void work() {
+        
+        if(!CCExtractor.ccextractorIsAvailable()) {
+            setStatus("ccextractor command not available, no extraction done");
+            log.warn("ccextractor command not available, no extraction done");
+            return;
+        }
+        
         setStatus("Extracting Closed Captions");
         setProgress(Progress.PROGRESS_INDETERMINATE);
 

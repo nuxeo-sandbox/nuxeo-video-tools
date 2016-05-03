@@ -55,10 +55,16 @@ public class CCExtractorListener implements PostCommitFilteringEventListener {
     }
 
     public void handleEvent(Event event) throws NuxeoException {
+        
+        if(!CCExtractor.ccextractorIsAvailable()) {
+            return;
+        }
+        
         EventContext ctx = event.getContext();
         if (!(ctx instanceof DocumentEventContext)) {
             return;
         }
+        
         DocumentEventContext docCtx = (DocumentEventContext) ctx;
         DocumentModel doc = docCtx.getSourceDocument();
 
