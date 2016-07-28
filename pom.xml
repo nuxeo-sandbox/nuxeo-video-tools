@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-addons-parent</artifactId>
-    <version>8.2</version>
+    <version>8.3</version>
   </parent>
   <groupId>org.nuxeo.video.tools</groupId>
   <artifactId>nuxeo-video-tools-parent</artifactId>
-  <version>8.2-SNAPSHOT</version>
+  <version>8.3-SNAPSHOT</version>
   <name>Parent Project for Nuxeo Video Tools</name>
   <packaging>pom</packaging>
   <description />
@@ -18,7 +18,7 @@
     <module>nuxeo-video-tools-mp</module>
   </modules>
   <properties>
-    <org.nuxeo.video.tools.version>8.2-SNAPSHOT</org.nuxeo.video.tools.version>
+    <org.nuxeo.video.tools.version>8.3-SNAPSHOT</org.nuxeo.video.tools.version>
   </properties>
   <dependencyManagement>
     <dependencies>
