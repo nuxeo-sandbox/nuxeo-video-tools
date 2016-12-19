@@ -39,7 +39,7 @@ import org.nuxeo.video.tools.VideoSlicer;
 @Operation(id = VideoSlicerOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Slice", description = "Slice the input blob starting at <code>start</code>, for <code>duration</code>. A specific converter can be used. For example, use videoSlicerByCopy for very fast cut (because ffmpeg does not re-encode the video) if you know there will be no frame or timestamp issue in the sliced video")
 public class VideoSlicerOp {
 
-    public static final String ID = "Video.Slice";
+    public static final String ID = "Video.SliceOp";
 
     @Param(name = "start", required = false)
     protected String start;

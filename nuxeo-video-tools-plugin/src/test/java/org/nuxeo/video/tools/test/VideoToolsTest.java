@@ -39,11 +39,9 @@ import org.nuxeo.video.tools.VideoConverter;
 import org.nuxeo.video.tools.VideoSlicer;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.core.util.BlobList;
-import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
+import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.test.CoreFeature;
-import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.ecm.platform.video.VideoHelper;
 import org.nuxeo.ecm.platform.video.VideoInfo;
 import org.nuxeo.runtime.test.runner.Deploy;
@@ -52,279 +50,285 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
 
 @RunWith(FeaturesRunner.class)
-@Features({ PlatformFeature.class, CoreFeature.class,
-        EmbeddedAutomationServerFeature.class })
-@Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor",
-        "org.nuxeo.ecm.platform.video.core",
-        "org.nuxeo.ecm.platform.video.convert",
-        "org.nuxeo.ecm.platform.picture.core" })
-@LocalDeploy({"nuxeo-video-tools-test:OSGI-INF/disabled-listeners-contrib.xml"})
+@Features({ AutomationFeature.class })
+@Deploy({ "nuxeo-video-tools", "org.nuxeo.ecm.platform.commandline.executor", "org.nuxeo.ecm.platform.preview",
+		"org.nuxeo.ecm.platform.video.core", "org.nuxeo.ecm.platform.video.convert",
+		"org.nuxeo.ecm.platform.picture.core" })
+@LocalDeploy({ "nuxeo-video-tools-test:OSGI-INF/disabled-listeners-contrib.xml" })
 public class VideoToolsTest {
 
-    protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
+	protected static final Log log = LogFactory.getLog(VideoToolsTest.class);
 
-    protected static final String VIDEO_WITH_CC = "files/VideoLan-Example.ts";
-        
-    protected static Boolean ffmpegOk = null;
+	protected static final String VIDEO_WITH_CC = "files/VideoLan-Example.ts";
 
-    @Before
-    public void setUp() {
-    }
+	protected static Boolean ffmpegOk = null;
 
-    @After
-    public void cleanup() {
+	@Before
+	public void setUp() {
+	}
 
-    }
-    
-    public boolean ffmpegLooksOk() throws IOException {
+	@After
+	public void cleanup() {
 
-        if(ffmpegOk == null) {
-            ffmpegOk = false;
-           
-            Blob result = null;
-            File f1 = FileUtils.getResourceFileFromContext("files/small.mp4");
-            FileBlob fb1 = new FileBlob(f1);
-            
-            VideoConverter vc = new VideoConverter(fb1);
-            result = vc.convert(0, "convertToWebM");
-            if(result != null) {
-                ffmpegOk = true;
-            }
-        }
-        
-        return ffmpegOk;
-        
-    }
+	}
 
-    protected String fileBlobToString(FileBlob inBlob) throws IOException {
+	public boolean ffmpegLooksOk() throws IOException {
 
-        File f = inBlob.getFile();
-        Path p = Paths.get(f.getAbsolutePath());
+		if (ffmpegOk == null) {
+			ffmpegOk = false;
 
-        return new String(Files.readAllBytes(p));
-    }
+			Blob result = null;
+			File f1 = FileUtils.getResourceFileFromContext("files/small.mp4");
+			FileBlob fb1 = new FileBlob(f1);
 
-    @Test
-    public void testExtractCC() throws Exception {
-        
-        Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
+			VideoConverter vc = new VideoConverter(fb1);
+			result = vc.convert(0, "convertToWebM");
+			if (result != null) {
+				ffmpegOk = true;
+			}
+		}
 
-        File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
-        FileBlob fb = new FileBlob(f);
+		return ffmpegOk;
 
-        CCExtractor cce = new CCExtractor(fb);
-        Blob result = cce.extractCC();
-        assertNotNull(result);
+	}
 
-        // It should be a FileBlob
-        assertTrue(result instanceof FileBlob);
+	protected String fileBlobToString(FileBlob inBlob) throws IOException {
 
-        String cc = fileBlobToString((FileBlob) result);
-        assertNotNull(cc);
-        assertNotEquals("", cc);
+		File f = inBlob.getFile();
+		Path p = Paths.get(f.getAbsolutePath());
 
-    }
+		return new String(Files.readAllBytes(p));
+	}
 
-    @Test
-    public void testExtractCC_sliced() throws Exception {
-        
-        Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
+	@Test
+	public void testExtractCC() throws Exception {
 
-        File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
-        FileBlob fb = new FileBlob(f);
+		Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
 
-        CCExtractor cce = new CCExtractor(fb, "00:10", "00:20");
-        Blob result = cce.extractCC();
-        assertNotNull(result);
+		File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
+		FileBlob fb = new FileBlob(f);
 
-        // It should be a FileBlob
-        assertTrue(result instanceof FileBlob);
+		CCExtractor cce = new CCExtractor(fb);
+		Blob result = cce.extractCC();
+		assertNotNull(result);
 
-        String cc = fileBlobToString((FileBlob) result);
-        assertNotNull(cc);
-        assertNotEquals("", cc);
+		// It should be a FileBlob
+		assertTrue(result instanceof FileBlob);
 
-    }
+		String cc = fileBlobToString((FileBlob) result);
+		assertNotNull(cc);
+		assertNotEquals("", cc);
 
-    @Test
-    public void testSlice() throws Exception {
-        
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice", ffmpegLooksOk());
+	}
 
-        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
-        FileBlob fb1 = new FileBlob(f1);
-        
-        VideoInfo vi;
-        
-        // Default slicer
-        VideoSlicer vs = new VideoSlicer(fb1);
-        Blob result = vs.slice("0", "3");
-        assertNotNull(result);
-        vi = VideoHelper.getVideoInfo(result);
-        double dFinal = vi.getDuration();
-        assertEquals(3.0, dFinal, 0.0);
+	@Test
+	public void testExtractCC_sliced() throws Exception {
 
-        
-        // slicer-by-copy
-        vs.setCommandLineName("videoSlicerByCopy");
-        result = vs.slice("0", "3");
-        assertNotNull(result);
-        vi = VideoHelper.getVideoInfo(result);
-        dFinal = vi.getDuration();
-        assertEquals(3.0, dFinal, 0.0);
-        
-    }
+		Assume.assumeTrue("ccextractor is not available, skipping test", CCExtractor.ccextractorIsAvailable());
 
-    @Ignore
-    @Test
-    public void testSliceInParts() throws Exception {
-        
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts", ffmpegLooksOk());
-        
-        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-TestSlice.mp4");
-        FileBlob fb1 = new FileBlob(f1);
-        double originalDuration = VideoHelper.getVideoInfo(fb1).getDuration();
-                
-        VideoSlicer vs = new VideoSlicer(fb1);
-        BlobList sliced = vs.slice("3");
-        assertNotNull(sliced);
-        // The SuggestionWidget-TestSlice.mp4 duration is 10 seconds => we should have 4 parts
-        assertEquals(4, sliced.size());
-        // Check the total duration is ok
-        double dFinal = 0;
-        for(Blob b : sliced) {
-            dFinal += VideoHelper.getVideoInfo(b).getDuration();
-        }
-        assertEquals(originalDuration, dFinal, 0);
-        
-    }
+		File f = FileUtils.getResourceFileFromContext(VIDEO_WITH_CC);
+		FileBlob fb = new FileBlob(f);
 
-    @Test
-    public void testConcatDemuxer() throws Exception {
-        
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer", ffmpegLooksOk());
+		CCExtractor cce = new CCExtractor(fb, "00:10", "00:20");
+		Blob result = cce.extractCC();
+		assertNotNull(result);
 
-        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
-        File f2 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0010-08.mp4");
-        File f3 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0020-09.mp4");
-        File f4 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0030-10.mp4");
+		// It should be a FileBlob
+		assertTrue(result instanceof FileBlob);
 
-        FileBlob fb1 = new FileBlob(f1);
-        FileBlob fb2 = new FileBlob(f2);
-        FileBlob fb3 = new FileBlob(f3);
-        FileBlob fb4 = new FileBlob(f4);
+		String cc = fileBlobToString((FileBlob) result);
+		assertNotNull(cc);
+		assertNotEquals("", cc);
 
-        VideoInfo vi;
-        vi = VideoHelper.getVideoInfo(fb1);
-        double d1 = vi.getDuration();
-        vi = VideoHelper.getVideoInfo(fb2);
-        double d2 = vi.getDuration();
-        vi = VideoHelper.getVideoInfo(fb3);
-        double d3 = vi.getDuration();
-        vi = VideoHelper.getVideoInfo(fb4);
-        double d4 = vi.getDuration();
+	}
 
-        VideoConcatDemuxer vc = new VideoConcatDemuxer();
-        vc.addBlob(fb1);
-        vc.addBlob(fb2);
-        vc.addBlob(fb3);
-        vc.addBlob(fb4);
+	@Test
+	public void testSlice() throws Exception {
 
-        Blob result = vc.concat();
-        assertNotNull(result);
-        vi = VideoHelper.getVideoInfo(result);
-        double dFinal = vi.getDuration();
+		Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSlice",
+				ffmpegLooksOk());
 
-        assertEquals(dFinal, d1 + d2 + d3 + d4, 0.0);
+		File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+		FileBlob fb1 = new FileBlob(f1);
 
-    }
+		VideoInfo vi;
 
-    @Test
-    public void testConvert() throws Exception {
-        
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert", ffmpegLooksOk());
+		// Default slicer
+		VideoSlicer vs = new VideoSlicer(fb1);
+		Blob result = vs.slice("0", "3");
+		assertNotNull(result);
+		vi = VideoHelper.getVideoInfo(result);
+		double dFinal = vi.getDuration();
+		assertEquals(3.0, dFinal, 0.0);
 
-        VideoConverter vc;
-        Blob result;
+		// slicer-by-copy
+		vs.setCommandLineName("videoSlicerByCopy");
+		result = vs.slice("0", "3");
+		assertNotNull(result);
+		vi = VideoHelper.getVideoInfo(result);
+		dFinal = vi.getDuration();
+		assertEquals(3.0, dFinal, 0.0);
 
-        File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
-        FileBlob fb1 = new FileBlob(f1);
+	}
 
-        VideoInfo vi;
-        vi = VideoHelper.getVideoInfo(fb1);
-        long originalH = vi.getHeight();
-        double originalD = vi.getDuration();
+	@Ignore
+	@Test
+	public void testSliceInParts() throws Exception {
 
-        // ------------------------------
-        vc = new VideoConverter(fb1);
-        result = vc.convert(200, "convertToWebM");
-        assertNotNull(result);
-        assertEquals("video/webm", result.getMimeType());
-        vi = VideoHelper.getVideoInfo(result);
-        assertEquals(200, vi.getHeight());
-        assertEquals(originalD, vi.getDuration(), 0.0);
+		Assume.assumeTrue(
+				"ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testSliceInParts",
+				ffmpegLooksOk());
 
-        // ------------------------------
-        vc = new VideoConverter(fb1);
-        result = vc.convert(0, "convertToWebM");
-        assertNotNull(result);
-        assertEquals("video/webm", result.getMimeType());
-        vi = VideoHelper.getVideoInfo(result);
-        assertEquals(originalH, vi.getHeight());
-        assertEquals(originalD, vi.getDuration(), 0.0);
+		File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-TestSlice.mp4");
+		FileBlob fb1 = new FileBlob(f1);
+		double originalDuration = VideoHelper.getVideoInfo(fb1).getDuration();
 
-        // ------------------------------
-        vc = new VideoConverter(fb1);
-        result = vc.convert(0.5, "convertToWebM");
-        assertNotNull(result);
-        assertEquals("video/webm", result.getMimeType());
-        vi = VideoHelper.getVideoInfo(result);
-        long expectedHeight = (long) (originalH * 0.5);
-        assertEquals(expectedHeight, vi.getHeight());
-        assertEquals(originalD, vi.getDuration(), 0.0);
+		VideoSlicer vs = new VideoSlicer(fb1);
+		BlobList sliced = vs.slice("3");
+		assertNotNull(sliced);
+		// The SuggestionWidget-TestSlice.mp4 duration is 10 seconds => we
+		// should have 4 parts
+		assertEquals(4, sliced.size());
+		// Check the total duration is ok
+		double dFinal = 0;
+		for (Blob b : sliced) {
+			dFinal += VideoHelper.getVideoInfo(b).getDuration();
+		}
+		assertEquals(originalDuration, dFinal, 0);
 
-        // ------------------------------
-        // Just reduce size
-        vc = new VideoConverter(fb1);
-        result = vc.convert(200, "convertToMP4");
-        assertNotNull(result);
-        assertEquals("video/mp4", result.getMimeType());
-        vi = VideoHelper.getVideoInfo(result);
-        assertEquals(200, vi.getHeight());
-        assertEquals(originalD, vi.getDuration(), 0.0);
+	}
 
-        // ------------------------------
-        vc = new VideoConverter(fb1);
-        result = vc.convert(200, "convertToAVI");
-        assertNotNull(result);
-        assertEquals("video/x-msvideo", result.getMimeType());
-        vi = VideoHelper.getVideoInfo(result);
-        assertEquals(200, vi.getHeight());
-        assertEquals(originalD, vi.getDuration(), 0.0);
+	@Test
+	public void testConcatDemuxer() throws Exception {
 
-    }
-    
-    @Ignore("Conversion with AVI not working on test machine (2015-11-26)")
-    @Test
-    public void testConvertAVI() throws Exception {
-        
-        Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvertAVI", ffmpegLooksOk());
-          
-        File f = FileUtils.getResourceFileFromContext("files/Test-AC3-v2.0.avi");
-        FileBlob fb = new FileBlob(f);
-        
-        VideoInfo vi = VideoHelper.getVideoInfo(fb);
-        double originalD = vi.getDuration();
-        
-        VideoConverter vc = new VideoConverter(fb);
-        Blob result = vc.convert(200, "convertToMP4");
-        
-        assertNotNull(result);
-        assertEquals("video/mp4", result.getMimeType());
-        vi = VideoHelper.getVideoInfo(result);
-        assertEquals(200, vi.getHeight());
-        // Duration may not be the exact same in this conversion
-        assertEquals(originalD, vi.getDuration(), 0.3);
-        
-    }
+		Assume.assumeTrue(
+				"ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConcatDemuxer",
+				ffmpegLooksOk());
+
+		File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+		File f2 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0010-08.mp4");
+		File f3 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0020-09.mp4");
+		File f4 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0030-10.mp4");
+
+		FileBlob fb1 = new FileBlob(f1);
+		FileBlob fb2 = new FileBlob(f2);
+		FileBlob fb3 = new FileBlob(f3);
+		FileBlob fb4 = new FileBlob(f4);
+
+		VideoInfo vi;
+		vi = VideoHelper.getVideoInfo(fb1);
+		double d1 = vi.getDuration();
+		vi = VideoHelper.getVideoInfo(fb2);
+		double d2 = vi.getDuration();
+		vi = VideoHelper.getVideoInfo(fb3);
+		double d3 = vi.getDuration();
+		vi = VideoHelper.getVideoInfo(fb4);
+		double d4 = vi.getDuration();
+
+		VideoConcatDemuxer vc = new VideoConcatDemuxer();
+		vc.addBlob(fb1);
+		vc.addBlob(fb2);
+		vc.addBlob(fb3);
+		vc.addBlob(fb4);
+
+		Blob result = vc.concat();
+		assertNotNull(result);
+		vi = VideoHelper.getVideoInfo(result);
+		double dFinal = vi.getDuration();
+
+		assertEquals(dFinal, d1 + d2 + d3 + d4, 0.0);
+
+	}
+
+	@Test
+	public void testConvert() throws Exception {
+
+		Assume.assumeTrue("ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvert",
+				ffmpegLooksOk());
+
+		VideoConverter vc;
+		Blob result;
+
+		File f1 = FileUtils.getResourceFileFromContext("files/SuggestionWidget-0000-10.mp4");
+		FileBlob fb1 = new FileBlob(f1);
+
+		VideoInfo vi;
+		vi = VideoHelper.getVideoInfo(fb1);
+		long originalH = vi.getHeight();
+		double originalD = vi.getDuration();
+
+		// ------------------------------
+		vc = new VideoConverter(fb1);
+		result = vc.convert(200, "convertToWebM");
+		assertNotNull(result);
+		assertEquals("video/webm", result.getMimeType());
+		vi = VideoHelper.getVideoInfo(result);
+		assertEquals(200, vi.getHeight());
+		assertEquals(originalD, vi.getDuration(), 0.0);
+
+		// ------------------------------
+		vc = new VideoConverter(fb1);
+		result = vc.convert(0, "convertToWebM");
+		assertNotNull(result);
+		assertEquals("video/webm", result.getMimeType());
+		vi = VideoHelper.getVideoInfo(result);
+		assertEquals(originalH, vi.getHeight());
+		assertEquals(originalD, vi.getDuration(), 0.0);
+
+		// ------------------------------
+		vc = new VideoConverter(fb1);
+		result = vc.convert(0.5, "convertToWebM");
+		assertNotNull(result);
+		assertEquals("video/webm", result.getMimeType());
+		vi = VideoHelper.getVideoInfo(result);
+		long expectedHeight = (long) (originalH * 0.5);
+		assertEquals(expectedHeight, vi.getHeight());
+		assertEquals(originalD, vi.getDuration(), 0.0);
+
+		// ------------------------------
+		// Just reduce size
+		vc = new VideoConverter(fb1);
+		result = vc.convert(200, "convertToMP4");
+		assertNotNull(result);
+		assertEquals("video/mp4", result.getMimeType());
+		vi = VideoHelper.getVideoInfo(result);
+		assertEquals(200, vi.getHeight());
+		assertEquals(originalD, vi.getDuration(), 0.0);
+
+		// ------------------------------
+		vc = new VideoConverter(fb1);
+		result = vc.convert(200, "convertToAVI");
+		assertNotNull(result);
+		assertEquals("video/x-msvideo", result.getMimeType());
+		vi = VideoHelper.getVideoInfo(result);
+		assertEquals(200, vi.getHeight());
+		assertEquals(originalD, vi.getDuration(), 0.0);
+
+	}
+
+	@Ignore("Conversion with AVI not working on test machine (2015-11-26)")
+	@Test
+	public void testConvertAVI() throws Exception {
+
+		Assume.assumeTrue(
+				"ffmpeg is not installed or not configured to handle mp4 and others. Cannot test testConvertAVI",
+				ffmpegLooksOk());
+
+		File f = FileUtils.getResourceFileFromContext("files/Test-AC3-v2.0.avi");
+		FileBlob fb = new FileBlob(f);
+
+		VideoInfo vi = VideoHelper.getVideoInfo(fb);
+		double originalD = vi.getDuration();
+
+		VideoConverter vc = new VideoConverter(fb);
+		Blob result = vc.convert(200, "convertToMP4");
+
+		assertNotNull(result);
+		assertEquals("video/mp4", result.getMimeType());
+		vi = VideoHelper.getVideoInfo(result);
+		assertEquals(200, vi.getHeight());
+		// Duration may not be the exact same in this conversion
+		assertEquals(originalD, vi.getDuration(), 0.3);
+
+	}
 }

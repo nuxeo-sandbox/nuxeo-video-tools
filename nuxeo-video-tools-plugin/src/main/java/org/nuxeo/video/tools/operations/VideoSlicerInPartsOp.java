@@ -37,7 +37,7 @@ import org.nuxeo.video.tools.VideoSlicer;
 @Operation(id = VideoSlicerInPartsOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Slice in Parts", description = "Slices the video in n parts of <code>duration</code> each. USing ffmpeg -segment switch with few arguments: Each part will probably not be exactly <code>duration</code> long, this is normal behavior.")
 public class VideoSlicerInPartsOp {
 
-    public static final String ID = "Video.SliceInParts";
+    public static final String ID = "Video.SliceInPartsOp";
 
     @Param(name = "duration", required = false)
     protected long duration;

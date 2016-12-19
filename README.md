@@ -3,6 +3,11 @@ nuxeo-video-tools
 
 This plug-in adds tools for handling videos: Slice, Merge, Extract ClosedCaptions, ...
 
+### WARNING: Changes between version 8.10 and previous ones
+2016-12-18
+Most of the operations have been added to Nuxeo Platform, with sometime, changes in the ID and/or the parameters. We encourage you to use the native operations (official support). As the operations have been integrated with the same IDs for some of them, this new 8-10-SNAPHOST version  of 2016-12-18 just rename the operations of the plug-in, to avoid any conflict with the native one.
+
+
 ### Quality Assurance
 QA build status: ![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=Sandbox/sandbox_nuxeo-video-tools-master)
 

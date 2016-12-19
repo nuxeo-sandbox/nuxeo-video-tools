@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.nuxeo.video.tools</groupId>
     <artifactId>nuxeo-video-tools-parent</artifactId>
-    <version>8.3-SNAPSHOT</version>
+    <version>8.10-SNAPSHOT</version>
   </parent>
   <groupId>org.nuxeo.video.tools</groupId>
   <artifactId>nuxeo-video-tools-plugin</artifactId>

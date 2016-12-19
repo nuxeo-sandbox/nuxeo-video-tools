@@ -40,7 +40,7 @@ import org.nuxeo.video.tools.CCExtractor;
 @Operation(id = ExtractClosedCaptionsOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Extract Closed Captions", description = "Returns a Blob containing the closed captions using <code>ccextractor</code> (see its documentation about <code>outFormat</code>). If <code>startAt</code>/<code>endAt</code> are empty, the whole movie is handled. If the input is a document, you can use <code>xpath</code> (ignored if the input is a blob)")
 public class ExtractClosedCaptionsOp {
 
-    public static final String ID = "Video.ExtractClosedCaptions";
+    public static final String ID = "Video.ExtractClosedCaptionsOp";
 
     @Param(name = "outFormat", required = false)
     protected String outFormat;
