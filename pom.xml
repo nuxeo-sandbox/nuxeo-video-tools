@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.nuxeo</groupId>
-    <artifactId>nuxeo-addons-parent</artifactId>
+    <groupId>org.nuxeo.ecm.distribution</groupId>
+    <artifactId>nuxeo-distribution</artifactId>
     <version>8.10</version>
   </parent>
   <groupId>org.nuxeo.video.tools</groupId>
@@ -18,19 +18,27 @@
     <module>nuxeo-video-tools-mp</module>
   </modules>
   <properties>
-    <org.nuxeo.video.tools.version>8.10-SNAPSHOT</org.nuxeo.video.tools.version>
+    <nuxeo.distribution.version>8.10</nuxeo.distribution.version>
+    <nuxeo.dam.nxr.version>6.2.3</nuxeo.dam.nxr.version>
   </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.nuxeo.video.tools</groupId>
         <artifactId>nuxeo-video-tools-plugin</artifactId>
-        <version>${org.nuxeo.video.tools.version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.nuxeo.video.tools</groupId>
         <artifactId>nuxeo-video-tools-mp</artifactId>
-        <version>${org.nuxeo.video.tools.version}</version>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.marketplace.dam</groupId>
+        <artifactId>marketplace</artifactId>
+        <classifier>nxr-server</classifier>
+        <version>${nuxeo.dam.nxr.version}</version>
+        <type>zip</type>
       </dependency>
     </dependencies>
   </dependencyManagement>
