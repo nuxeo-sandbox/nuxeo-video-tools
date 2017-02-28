@@ -43,7 +43,7 @@ import org.nuxeo.video.tools.VideoConcatDemuxer;
 @Operation(id = VideoConcatDemuxerOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Concat (ffmpeg demuxer)", description = "Merge 2-n videos in one using ffmpeg demuxer. Please, see to ffmpeg documentation about efficiency, timestamps, ... For example, mixing formats, sizes, frame rates ... will not create a nice final video. f <code>resultFileName</code> is not used, the operation uses the first file and adds -concat (then the file extension)")
 public class VideoConcatDemuxerOp {
 
-    public static final String ID = "Video.ConcatWithFfmpegDemuxer";
+    public static final String ID = "Video.ConcatWithFfmpegDemuxerOp";
 
     @Param(name = "resultFileName", required = false)
     protected String resultFileName;

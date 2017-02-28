@@ -33,7 +33,7 @@ import org.nuxeo.video.tools.VideoConverter;
 @Operation(id = VideoConverterOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Convert", description = "Uses a video converter (declared in an XML extension) to transcode the video using a new height. Use either <code>height</code> <i>or</i> <code>scale</scale>. If both are > 0, the operation uses <code>height</code>. If the height is <= 0, then the video is just transcoded (not resized).")
 public class VideoConverterOp {
 
-    public static final String ID = "Video.Convert";
+    public static final String ID = "Video.ConvertOp";
 
     @Param(name = "height", required = false)
     protected long height;
