@@ -36,7 +36,7 @@ import org.nuxeo.video.tools.VideoWatermarker;
 @Operation(id = VideoWatermarkWithPictureOp.ID, category = Constants.CAT_CONVERSION, label = "Video: Watermark with Picture", description = "Watermark the video with the picture stored in file:content of pictureDoc. x-y: Position of the left-top corner of the picture.")
 public class VideoWatermarkWithPictureOp {
 
-    public static final String ID = "Video.WatermarkWithPictureOp";
+    public static final String ID = "Video.WatermarkWithPicture";
 
     @Param(name = "pictureDoc", required = true)
     protected DocumentModel pictureDoc;
